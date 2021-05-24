@@ -1,5 +1,12 @@
+import MG2D.Couleur;
+import MG2D.geometrie.Cercle;
+import MG2D.geometrie.Dessin;
+import MG2D.geometrie.Point;
 import MG2D.geometrie.Texture;
 import math.Vecteur2;
+
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 
 /**
@@ -22,15 +29,12 @@ public  class Pion extends Acteur {
     Texture texture = null;
 
     /**
-     * Constructeur Pion
-     *
-     * @param x - Coordonnée X relative au damier
-     * @param y - Coordornée Y relative au damier
+     * Constructeur par défaut du Pion
      * */
-    public Pion(int x, int y){
+    public Pion(Vecteur2<Integer> position){
+        super(position);
 
-        super(new Vecteur2<Integer>(x,y));
-
+        System.out.println(position.getX());
     }
 
     /**
@@ -38,11 +42,54 @@ public  class Pion extends Acteur {
      * */
 
     public Pion(Pion that){
-
         super(new Vecteur2<Integer>(that.getPosition().getX(), that.getPosition().getY()));
 
+    }
+
+    @Override
+    public void onClique(MouseEvent event) {
 
     }
 
 
+    @Override
+    public ArrayList<Dessin> dessiner() {
+        System.out.println("Pion :" + position.getX() + ", " + position.getY());
+        Cercle cercle = new Cercle(
+                Couleur.MAGENTA,
+                new Point(getPosition().getX(),getPosition().getY()),
+                //Jeu.getInstance().getScene().getGrille().getHauteurCases()
+                10
+        );
+        cercle.setPlein(true);
+        dessins.add(cercle);
+        return dessins;
+    }
+
+    @Override
+    public void mettreAJours() {
+
+    }
+
+    @Override
+    public void onAjoute(Case caseActuelle) {
+
+
+
+    }
+
+    @Override
+    public void onMisAJour() {
+
+    }
+
+    @Override
+    public void onSupprime() {
+
+    }
+
+    @Override
+    public void onDessine() {
+
+    }
 }
