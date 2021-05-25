@@ -3,7 +3,7 @@ public class Joueur{
         //Ensemble des atributs
 
     // id du joueur
-    private byte id ;
+    private int id ;
     // prenom du joueur
     private String prenom = null;
     // nom du joueur 
@@ -11,11 +11,11 @@ public class Joueur{
     // couleur du joueur
     private MG2D.Couleur couleur ;
     // nombre de pions 
-    private byte nbrPion;
+    private int nbrPion;
     // nombre de pions capturé
-    private byte nbrCapture = 0 ;
+    private int nbrCapture = 0 ;
     // nombvre de objet de type joueur
-    private static byte nbr_joueur = 0 ;
+    private static int nbr_joueur = 0 ;
 
 
         // Ensemble des constructeurs
@@ -30,7 +30,7 @@ public class Joueur{
         this.couleur = couleur ;
     }
 
-    public Joueur(byte id ,byte pion){
+    public Joueur(int id ,int pion){
         this.id = id ;
         this.nbrPion = pion ;
     }
@@ -51,19 +51,19 @@ public class Joueur{
      * getteur de l'id du joueur 
      * @return -retourne l'id
      */
-    public byte getId(){return this.id;}
+    public int getId(){return this.id;}
 
     /**
      * getteur de nbrPion
      * @return -retourne le nombre restant de pion du joueur 
      */
-    public byte getNbrPion(){return this.nbrPion;}
+    public int getNbrPion(){return this.nbrPion;}
 
     /**
      * getteur de nbrCapture
      * @return -retourne le nombre de capture effectué par le joueur 
      */
-    public byte getNbrCapture(){return this.nbrCapture;}
+    public int getNbrCapture(){return this.nbrCapture;}
 
 
 
@@ -84,11 +84,11 @@ public class Joueur{
      * setteur de nbrPion
      * @param that _nombre de pion du joueur
      */
-    public void setNbrPion(byte that){this.nbrPion=that;}
+    public void setNbrPion(int that){this.nbrPion=that;}
 
     /**
      * setteur de nbrCapture
      * @param that -nbr de cature effectuer par le joueur 
      */
-    public void setNbrCapture(byte that){this.nbrCapture=that;}
+    public void setNbrCapture(int that){this.nbrCapture=that;}
 }
