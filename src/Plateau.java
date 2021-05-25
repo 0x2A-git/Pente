@@ -124,6 +124,38 @@ public class Plateau extends Acteur {
             }
         }
 
+        Ligne derniereLigneH = new Ligne(
+            new Point(
+                getGrille().getPosition().getX(),
+                getGrille().getPosition().getY() + getGrille().getMatrice().get(0).size() * getGrille().getHauteurCases()
+            ),
+
+            new Point(
+                getGrille().getPosition().getX() + getGrille().getMatrice().size() * getGrille().getLargeurCases(),
+                getGrille().getPosition().getY() + getGrille().getMatrice().get(0).size() * getGrille().getHauteurCases()
+
+            )
+        );
+        
+        Ligne derniereLigneL = new Ligne(
+            
+            new Point(
+                getGrille().getPosition().getX() + getGrille().getMatrice().size() * getGrille().getLargeurCases(),
+                getGrille().getPosition().getY() + getGrille().getMatrice().get(0).size() * getGrille().getHauteurCases()
+
+            ),
+
+            new Point(
+                getGrille().getPosition().getX() + getGrille().getMatrice().size() * getGrille().getLargeurCases(),
+                getGrille().getPosition().getY()
+            )
+
+        );
+
+        dessins.add(derniereLigneH);
+        dessins.add(derniereLigneL);
+        
+
         return dessins;
     }
 
