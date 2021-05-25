@@ -14,8 +14,6 @@ public class Joueur{
     private int nbrPion;
     // nombre de pions capturé
     private int nbrCapture = 0 ;
-    // nombvre de objet de type joueur
-    private static int nbr_joueur = 0 ;
 
 
         // Ensemble des constructeurs
