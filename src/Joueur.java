@@ -1,9 +1,10 @@
 import MG2D.Couleur;
-public class Joueur{
-        //Ensemble des atributs
 
-    // id du joueur
-    private int id ;
+import java.lang.ref.Reference;
+import java.util.ArrayList;
+
+public class Joueur{
+
     // prenom du joueur
     private String prenom = null;
     // nom du joueur 
@@ -15,47 +16,53 @@ public class Joueur{
     // nombre de pions capturé
     private int nbrCapture = 0 ;
 
+    // Garde les adresses mémoires des pions placés par ce joueur
+    private ArrayList<Reference<Pion>> pions;
 
-        // Ensemble des constructeurs
+    // Ensemble des constructeurs
 
-    public Joueur(){}
+    public Joueur(){
+
+        this.pions = new ArrayList<>();
+
+    }
 
     // prenant les paramètres nom, prénom, couleur
-    public Joueur( String prenom , String nom, MG2D.Couleur couleur){
-        this.idSet();
-        this.prenom = prenom ;
-        this.nom = nom ;
-        this.couleur = couleur ;
+    public Joueur(String prenom, String nom, MG2D.Couleur couleur){
+
+        this.pions = new ArrayList<>();
+
+
+        this.prenom = prenom;
+        this.nom = nom;
+        this.couleur = couleur;
     }
 
-    public Joueur(int id ,int pion){
-        this.id = id ;
-        this.nbrPion = pion ;
-    }
-
-
-
-        // Ensembles des methodes 
-    public void idSet(){
-        
-    }
-
-    
-
-    
-        //  Ensemble des getteurs
-    
     /**
-     * getteur de l'id du joueur 
-     * @return -retourne l'id
+     * Ajouter Pion
+     * @param ref - référence vers le pion ajouté sur le plateau ou capturé
      */
-    public int getId(){return this.id;}
+    public void ajouterPion(Reference<Pion> ref) {
+        this.pions.add(ref);
+    }
 
     /**
-     * getteur de nbrPion
+     * Retirer pion
+     * @param ref - référence du pion à retirer du joueur
+     */
+
+    public void retirerPion(Reference<Pion> ref){
+        this.pions.remove(ref);
+    }
+
+
+    /**
+     * Getter de nbrPion
      * @return -retourne le nombre restant de pion du joueur 
      */
-    public int getNbrPion(){return this.nbrPion;}
+    public int getNbrPion(){
+        return this.pions.size();
+    }
 
     /**
      * getteur de nbrCapture
@@ -63,30 +70,22 @@ public class Joueur{
      */
     public int getNbrCapture(){return this.nbrCapture;}
 
+    // Ensemble des setteurs
 
-
-
-
-
-//      Ensemble des setteurs
 
     /**
-     * setteur de l'id 
-     * @param that -id du jouer 
+     * Setter de nbrPion
+     * @param nbrPions _nombre de pion du joueur
      */
-    public void setId(){
-        //atribut static pour voir le nombre de joueur deja crée
+    public void setNbrPions(int nbrPions){
+        this.nbrPion = nbrPions;
     }
 
     /**
-     * setteur de nbrPion
-     * @param that _nombre de pion du joueur
+     * Setter de nbrCapture
+     * @param nbrCapture -nbr de cature effectuer par le joueur
      */
-    public void setNbrPion(int that){this.nbrPion=that;}
-
-    /**
-     * setteur de nbrCapture
-     * @param that -nbr de cature effectuer par le joueur 
-     */
-    public void setNbrCapture(int that){this.nbrCapture=that;}
+    public void setNbrCapture(int nbrCapture){
+        this.nbrCapture = nbrCapture;
+    }
 }
