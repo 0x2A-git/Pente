@@ -1,5 +1,4 @@
 import MG2D.Couleur;
-import MG2D.Fenetre;
 import MG2D.geometrie.*;
 import math.Vecteur2;
 
@@ -42,14 +41,14 @@ public class Grille implements Case.Callbacks {
 
     private ArrayList<AjoutCallbacks> onLigneAjouteeCallbacks = new ArrayList<>();
 
-    private int lignes = -1;
-    private int colonnes = -1;
+    private int lignes;
+    private int colonnes;
 
     private Couleur couleurLignesVerticales = Couleur.VERT;
     private Couleur couleurLignesHorizontales = Couleur.ROUGE;
 
     // Position de la grille sur l'écran ( en pixels )
-    private Vecteur2<Integer> position = null;
+    private Vecteur2<Integer> position;
 
     /**
      * Les 2 premiers vecteurs représentent colonne, ligne ; Le 3ème représente les objects à l'intérieur d'une case
@@ -62,18 +61,18 @@ public class Grille implements Case.Callbacks {
 
 
     // Représente la largeur et la hauteur de la grille en pixels
-    private int largeur = 0;
-    private int hauteur = 0;
+    private int largeur;
+    private int hauteur;
 
     private int largeurCase = 0;
     private int hauteurCase = 0;
 
-    public enum Placement {
-        BAS_GAUCHE,
-        HAUT_DROIT,
+    public enum Mode {
+        CASE,
+        INTERSECTION
     }
 
-    Placement placement = Placement.BAS_GAUCHE;
+    Mode mode = Mode.CASE;
 
 
     /**
@@ -92,7 +91,7 @@ public class Grille implements Case.Callbacks {
         this.hauteur = hauteur;
 
 
-        this.position = new Vecteur2<Integer>(0, 0);
+        this.position = new Vecteur2<>(0, 0);
 
         this.initialiser();
 
@@ -167,7 +166,7 @@ public class Grille implements Case.Callbacks {
     private void initialiser() {
         // Initialisation colonnes
 
-        this.matrice = new Vector<Vector<Case>>();
+        this.matrice = new Vector<>();
 
         this.matrice.setSize(colonnes);
 
@@ -177,7 +176,7 @@ public class Grille implements Case.Callbacks {
 
             // Init lignes
 
-            this.matrice.set(x, new Vector<Case>());
+            this.matrice.set(x, new Vector<>());
 
             this.matrice.get(x).setSize(this.lignes);
 
@@ -186,7 +185,7 @@ public class Grille implements Case.Callbacks {
                 Case caseActuelle =  new Case(
                         Math.floorDiv(getLargeur(), this.matrice.size()),
                         Math.floorDiv(getHauteur(), this.matrice.get(x).size()),
-                        new Vecteur2<Integer>(x,y),
+                        new Vecteur2<>(x, y),
                         getPosition());
 
                 /* Debug
@@ -209,20 +208,34 @@ public class Grille implements Case.Callbacks {
     }
 
     /**
-     * Setter Placement
-     * @param placement - Nouveau mode de placement sur la grille
+     * Getter Case
+     * @param x - Coordonnée X
+     * @param y - Coordonnée Y
+     * @return - Case en x, y
+     */
+
+    public Case getCase(int x, int y){
+        return this.getMatrice().get(x).get(y);
+    }
+
+    public Case getCase(Vecteur2<Integer> position){
+        return this.getMatrice().get(position.getX()).get(position.getY());
+    }
+    /**
+     * Setter Mode
+     * @param mode - Nouveau mode de placement sur la grille
      * */
-    public void setPlacement(Placement placement){
-        this.placement = placement;
+    public void setMode(Mode mode){
+        this.mode = mode;
     }
 
     /**
-     * Getter Placement
-     * @return - Retourne le placement actuel sur la grille
+     * Getter Mode
+     * @return - Retourne le mode actuel sur la grille
      * */
 
-    public Placement getPlacement(){
-        return this.placement;
+    public Mode getMode(){
+        return this.mode;
     }
 
     /**
@@ -326,7 +339,7 @@ public class Grille implements Case.Callbacks {
             Case caseActuelle = new Case(
                     Math.floorDiv(getLargeur(), this.matrice.size()),
                     Math.floorDiv(getHauteur(), this.matrice.get(x).size() + 1),
-                    new Vecteur2<Integer>(x, this.matrice.size() + 1),
+                    new Vecteur2<>(x, this.matrice.size() + 1),
                     getPosition()
             );
 
@@ -335,10 +348,9 @@ public class Grille implements Case.Callbacks {
         }
 
         // On va recalculer la taille des cases en pixels une fois la ligne ajoutée
-        for(int x = 0; x < matrice.size(); x++)
-
-            for(int y = 0; y < matrice.get(x).size() - 1; y++)
-                this.matrice.get(x).get(y).setHauteur(Math.floorDiv(this.getHauteur(), this.matrice.get(x).size()));
+        for (Vector<Case> cases : matrice)
+            for (int y = 0; y < cases.size() - 1; y++)
+                cases.get(y).setHauteur(Math.floorDiv(this.getHauteur(), cases.size()));
 
 
         onLigneAjouteeCallbacks.forEach(cb -> cb.onLigneAjoutee());
@@ -350,13 +362,13 @@ public class Grille implements Case.Callbacks {
      * */
 
     public void ajouterColonne(){
-        this.matrice.add(new Vector<Case>());
+        this.matrice.add(new Vector<>());
 
         for(int y = 0; y < this.matrice.get(0).size(); y++)
             this.matrice.get(this.matrice.size() - 1).add(new Case(
                     Math.floorDiv(getLargeur(), this.matrice.size()),
                     Math.floorDiv(getHauteur(), this.matrice.get(0).size()),
-                    new Vecteur2<Integer>(this.matrice.size(), y),
+                    new Vecteur2<>(this.matrice.size(), y),
                     getPosition()
             ));
 
@@ -425,7 +437,7 @@ public class Grille implements Case.Callbacks {
 
     /**
      * Getter Position de la grille
-     * @¶eturn - Position de la grille
+     * @return - Position de la grille
      * */
     public Vecteur2<Integer> getPosition(){
         return this.position;
