@@ -21,8 +21,8 @@ public class Pente {
                 new Grille(
                         fenetrePrincipale.getP().getWidth(),
                         fenetrePrincipale.getP().getHeight(),
-                        6,
-                        6
+                        8,
+                        8
                 ));
 
 
@@ -31,8 +31,8 @@ public class Pente {
 
         scenePrincipale.getGrille().dessinerDebug().forEach(d -> fenetrePrincipale.ajouter(d));
 
-        scenePrincipale.getGrille().getMatrice().get(1).get(1).etendreColonne(4);
-        scenePrincipale.getGrille().getMatrice().get(1).get(1).etendreLigne(4);
+        scenePrincipale.getGrille().getMatrice().get(1).get(1).etendreColonne(5);
+        scenePrincipale.getGrille().getMatrice().get(1).get(1).etendreLigne(5);
 
         Case caseDepart = scenePrincipale.getGrille().getMatrice().get(1).get(1);
 
