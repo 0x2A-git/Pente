@@ -7,7 +7,7 @@ public class Joueur{
 
     // prenom du joueur
     private String prenom = null;
-    // nom du joueur 
+    // nom du joueur
     private String nom = null;
     // couleur du joueur
     private MG2D.Couleur couleur ;
@@ -47,6 +47,14 @@ public class Joueur{
     }
 
     /**
+     * Getter Pions
+     * @return - Retourne un tableau de référence des pions du joueur
+     */
+    public ArrayList<Reference<Pion>> getPions(){
+        return this.pions;
+    }
+
+    /**
      * Retirer pion
      * @param ref - référence du pion à retirer du joueur
      */
@@ -70,7 +78,15 @@ public class Joueur{
      */
     public int getNbrCapture(){return this.nbrCapture;}
 
-    // Ensemble des setteurs
+
+    /**
+     * Getter Couleur
+     * @return - Couleur du joueur
+     */
+    public Couleur getCouleur(){
+        return this.couleur;
+    }
+    // Ensemble des Setters
 
 
     /**
@@ -87,5 +103,13 @@ public class Joueur{
      */
     public void setNbrCapture(int nbrCapture){
         this.nbrCapture = nbrCapture;
+    }
+
+    /**
+     * Setter Couleur
+     * @param couleur - Nouvelle couleur
+     */
+    public void setCouleur(Couleur couleur){
+        this.couleur = couleur;
     }
 }
