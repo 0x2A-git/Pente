@@ -1,5 +1,4 @@
 import MG2D.Couleur;
-import MG2D.Fenetre;
 import MG2D.geometrie.Dessin;
 import MG2D.geometrie.Ligne;
 import MG2D.geometrie.Point;
@@ -10,14 +9,16 @@ import java.util.ArrayList;
 
 public class Plateau extends Acteur {
 
-
+    // Grille de jeu
     Grille grille = null;
 
-    Vecteur2<Integer> position = null;
+    /**
+     * Constructeur par défaut de Plateau
+     */
 
     public Plateau(){
 
-        super(new Vecteur2<Integer>(0,0));
+        super(new Vecteur2<>(0, 0));
     }
 
     public Plateau(Vecteur2<Integer> position){
@@ -35,16 +36,30 @@ public class Plateau extends Acteur {
     public void onClique(MouseEvent event) {
 
 
-        Vecteur2<Integer> localCoords = new Vecteur2<Integer>(
-                Math.floorDiv(event.getX() - getPosition().getX(), getGrille().getLargeurCases()),
-                Math.floorDiv((Jeu.getInstance().getFenetre().getHeight() - (getPosition().getY()) - event.getY()), getGrille().getHauteurCases())
+        // Coordoonées relatives au plateau
+        Vecteur2<Integer> localCoords = new Vecteur2<>(
+                Math.floorDiv(event.getX() - getPosition().getX() + (getGrille().getLargeurCases() / 2), getGrille().getLargeurCases()),
+                Math.floorDiv((Jeu.getInstance().getFenetre().getHeight() - (getPosition().getY()) - event.getY() + (getGrille().getHauteurCases() / 2)), getGrille().getHauteurCases())
         );
 
-        Case caseActuelle = getGrille().getMatrice().get(localCoords.getX()).get(localCoords.getY());
+        // On Clamp la valeur sur X et Y pour éviter les erreurs Out of Bounds
+        localCoords.setX(Math.min(Math.max(localCoords.getX(), 0), getGrille().getMatrice().size() - 1));
+        localCoords.setY(Math.min(Math.max(localCoords.getY(), 0), getGrille().getMatrice().get(0).size() - 1));
 
-        System.out.println(localCoords.getX() + ", " + localCoords.getY());
 
-        Acteur pion = new Pion(caseActuelle.getPositionEcran());
+
+        Case caseActuelle = getGrille().getCase(localCoords);
+
+        if(caseActuelle.getObjets().size() > 0)
+            return;
+
+
+        Acteur pion = new Pion(
+                new Vecteur2<>(
+                        getGrille().getPosition().getX() + caseActuelle.getPosition().getX() * getGrille().getLargeurCases(),
+                        getGrille().getPosition().getY() + caseActuelle.getPosition().getY() * getGrille().getHauteurCases()
+                )
+        );
 
         getGrille().ajouter(
                 caseActuelle.getPosition(),
@@ -60,13 +75,31 @@ public class Plateau extends Acteur {
     @Override
     public void onAjoute(Case caseActuelle) {
 
+        // On va créer une grille de 19 + 1 et cacher le dernier carré afin de pouvoir poser des pions sur les côtés
         this.grille = new Grille(
                 getPosition(),
                 caseActuelle.getLargeur(),
                 caseActuelle.getHauteur(),
-                19,19);
+                20,20);
+
+
+        getGrille().getPosition().setX(
+                // Moitié de largeur de la case - ( largeur de la grille ( en enlevant une case ) / 2 )
+                (caseActuelle.getPositionEcran().getX() + caseActuelle.getLargeur() / 2 ) - (getGrille().getLargeur() - getGrille().getLargeurCases()) / 2
+        );
+
+        getPosition().setX(getGrille().getPosition().getX());
+
+        getGrille().getPosition().setY(
+                (caseActuelle.getPositionEcran().getY() + caseActuelle.getHauteur() / 2) - (getGrille().getHauteur() - getGrille().getHauteurCases()) / 2
+         );
+
+        getPosition().setY(getGrille().getPosition().getY());
+
+
+
         grille.setCouleurLignes(Couleur.NOIR, Couleur.NOIR);
-        grille.setPlacement(Grille.Placement.HAUT_DROIT);
+        grille.setMode(Grille.Mode.INTERSECTION);
 
 
     }
@@ -75,8 +108,8 @@ public class Plateau extends Acteur {
 
     public ArrayList<Dessin> dessiner() {
 
-        for(int x = 0; x < getGrille().getMatrice().size(); x++) {
-            for (int y = 0; y < getGrille().getMatrice().size(); y++) {
+        for(int x = 0; x < getGrille().getMatrice().size() - 1; x++) {
+            for (int y = 0; y < getGrille().getMatrice().size() - 1; y++) {
 
 
                 Case caseActuelle = getGrille().getMatrice().get(x).get(y);
@@ -124,37 +157,38 @@ public class Plateau extends Acteur {
             }
         }
 
-        Ligne derniereLigneH = new Ligne(
+        Ligne derniereLigneHorizontale = new Ligne(
             new Point(
                 getGrille().getPosition().getX(),
-                getGrille().getPosition().getY() + getGrille().getMatrice().get(0).size() * getGrille().getHauteurCases()
+                getGrille().getPosition().getY() + (getGrille().getMatrice().get(0).size() - 1) * getGrille().getHauteurCases()
             ),
 
             new Point(
-                getGrille().getPosition().getX() + getGrille().getMatrice().size() * getGrille().getLargeurCases(),
-                getGrille().getPosition().getY() + getGrille().getMatrice().get(0).size() * getGrille().getHauteurCases()
+                getGrille().getPosition().getX() + ( getGrille().getMatrice().size() - 1) * getGrille().getLargeurCases(),
+                getGrille().getPosition().getY() + (getGrille().getMatrice().get(0).size() - 1) * getGrille().getHauteurCases()
 
             )
         );
-        
-        Ligne derniereLigneL = new Ligne(
-            
+
+
+        Ligne derniereLigneVerticale = new Ligne(
+
             new Point(
-                getGrille().getPosition().getX() + getGrille().getMatrice().size() * getGrille().getLargeurCases(),
-                getGrille().getPosition().getY() + getGrille().getMatrice().get(0).size() * getGrille().getHauteurCases()
+                getGrille().getPosition().getX() + (getGrille().getMatrice().size() - 1) * getGrille().getLargeurCases(),
+                getGrille().getPosition().getY() + (getGrille().getMatrice().get(0).size() - 1)* getGrille().getHauteurCases()
 
             ),
 
             new Point(
-                getGrille().getPosition().getX() + getGrille().getMatrice().size() * getGrille().getLargeurCases(),
+                getGrille().getPosition().getX() + (getGrille().getMatrice().size() - 1) * getGrille().getLargeurCases(),
                 getGrille().getPosition().getY()
             )
 
         );
 
-        dessins.add(derniereLigneH);
-        dessins.add(derniereLigneL);
-        
+        dessins.add(derniereLigneHorizontale);
+        dessins.add(derniereLigneVerticale);
+
 
         return dessins;
     }
