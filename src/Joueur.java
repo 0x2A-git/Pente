@@ -11,8 +11,6 @@ public class Joueur{
     private String nom = null;
     // couleur du joueur
     private MG2D.Couleur couleur ;
-    // nombre de pions 
-    private int nbrPion;
     // nombre de pions capturé
     private int nbrCapture = 0 ;
 
@@ -65,15 +63,15 @@ public class Joueur{
 
 
     /**
-     * Getter de nbrPion
+     * Getter pour récupérer le nombre de pions
      * @return -retourne le nombre restant de pion du joueur 
      */
-    public int getNbrPion(){
+    public int getNbrPions(){
         return this.pions.size();
     }
 
     /**
-     * getteur de nbrCapture
+     * Getter de nbrCapture
      * @return -retourne le nombre de capture effectué par le joueur 
      */
     public int getNbrCapture(){return this.nbrCapture;}
@@ -86,16 +84,23 @@ public class Joueur{
     public Couleur getCouleur(){
         return this.couleur;
     }
-    // Ensemble des Setters
-
 
     /**
-     * Setter de nbrPion
-     * @param nbrPions _nombre de pion du joueur
+     * Getter Nom
+     * @return - Nom joueur
      */
-    public void setNbrPions(int nbrPions){
-        this.nbrPion = nbrPions;
+
+    public String getNom(){
+        return this.nom;
     }
+
+    /**
+     * Getter Prenom
+     */
+    public String getPrenom() {
+        return prenom;
+    }
+    // Ensemble des Setters
 
     /**
      * Setter de nbrCapture
@@ -111,5 +116,21 @@ public class Joueur{
      */
     public void setCouleur(Couleur couleur){
         this.couleur = couleur;
+    }
+
+    /**
+     * Setter Nom
+     * @param nom - Nom du joueur
+     */
+    public void setNom(String nom){
+        this.nom = nom;
+    }
+
+    /**
+     * Setter Prenom
+     * @param prenom - Prenom du joueur
+     */
+    public void setPrenom(String prenom){
+        this.prenom = prenom;
     }
 }
