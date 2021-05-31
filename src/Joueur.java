@@ -1,5 +1,6 @@
 import MG2D.Couleur;
 
+import java.awt.*;
 import java.lang.ref.Reference;
 import java.util.ArrayList;
 
@@ -10,12 +11,12 @@ public class Joueur{
     // nom du joueur
     private String nom = null;
     // couleur du joueur
-    private MG2D.Couleur couleur ;
+    private Couleur couleur ;
     // nombre de pions capturé
     private int nbrCapture = 0 ;
 
     // Garde les adresses mémoires des pions placés par ce joueur
-    private ArrayList<Reference<Pion>> pions;
+    private ArrayList<Pion> pions;
 
     // Ensemble des constructeurs
 
@@ -38,27 +39,27 @@ public class Joueur{
 
     /**
      * Ajouter Pion
-     * @param ref - référence vers le pion ajouté sur le plateau ou capturé
+     * @param pion - référence forte vers le pion ajouté sur le plateau ou capturé
      */
-    public void ajouterPion(Reference<Pion> ref) {
-        this.pions.add(ref);
+    public void ajouterPion(Pion pion) {
+        this.pions.add(pion);
     }
 
     /**
      * Getter Pions
      * @return - Retourne un tableau de référence des pions du joueur
      */
-    public ArrayList<Reference<Pion>> getPions(){
+    public ArrayList<Pion> getPions(){
         return this.pions;
     }
 
     /**
      * Retirer pion
-     * @param ref - référence du pion à retirer du joueur
+     * @param pion - référence forte du pion à retirer du joueur
      */
 
-    public void retirerPion(Reference<Pion> ref){
-        this.pions.remove(ref);
+    public void retirerPion(Pion pion){
+        this.pions.remove(pion);
     }
 
 
