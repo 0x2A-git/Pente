@@ -16,21 +16,25 @@ public class Scene {
 
     Fenetre fenetre;
 
+    /**
+     * Constructeur Scene
+     *
+     * @param fenetre - Fenetre MG2D où l'on va dessiner
+     * @param grille - Grille de la scène
+     */
     public Scene(Fenetre fenetre, Grille grille){
         this.fenetre = fenetre;
         this.grille = grille;
     }
 
 
-    public Grille getGrille(){
-        return this.grille;
-    }
-
-    public void onClique(Vecteur2<Integer> caseConcernee){
-
-
-    }
-
+    /**
+     *
+     * Permet d'ajouter un objet à la grille scène
+     *
+     * @param pos - Position en unité de grille
+     * @param obj - Objet à ajouter
+     */
     public void ajouter(Vecteur2<Integer> pos, Acteur obj){
         getGrille().ajouter(pos, obj);
 
@@ -47,6 +51,14 @@ public class Scene {
 
 
 
+    /**
+     *
+     * Permet d'ajouter un objet à la grille de la scène
+     *
+     * @param pos - Position en unité de grille
+     * @param obj - Objet à ajouter
+     * @param placement - Type de placement à effectuer par rapport à la case
+     */
     public void ajouter(Vecteur2<Integer> pos, Acteur obj, Placement placement){
         getGrille().ajouter(pos, obj);
 
@@ -59,6 +71,9 @@ public class Scene {
                     pos.getY() * this.getGrille().getHauteurCases() + Math.floorDiv(getGrille().getHauteurCases(), 2)
                 ));
             break;
+
+            default:
+                break;
         }
         obj.onAjoute(getGrille().getMatrice().get(pos.getX()).get(pos.getY()) );
 
@@ -67,8 +82,12 @@ public class Scene {
     }
 
 
-
-    public void supprimer(){
-
+    /**
+     * Getter de la grille de la scène actuelle
+     * @return - Grille principale du jeu
+     */
+    public Grille getGrille(){
+        return this.grille;
     }
+
 }
