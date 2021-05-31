@@ -150,8 +150,7 @@ public class Plateau extends Acteur {
                 dessins.add(l);
                 // Dessin lignes verticales
                 Point s2 = new Point(
-                        x * caseActuelle.getLargeur(),
-                        y * caseActuelle.getHauteur()
+                        s1
                 );
 
                 s2.setX(s2.getX() + getPosition().getX());
