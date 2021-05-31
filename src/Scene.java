@@ -8,9 +8,13 @@ import math.Vecteur2;
 
 public class Scene {
 
-    Grille grille = null;
+    public enum Placement {
+        MILIEU
+    }
 
-    Fenetre fenetre = null;
+    Grille grille;
+
+    Fenetre fenetre;
 
     public Scene(Fenetre fenetre, Grille grille){
         this.fenetre = fenetre;
@@ -29,7 +33,33 @@ public class Scene {
 
     public void ajouter(Vecteur2<Integer> pos, Acteur obj){
         getGrille().ajouter(pos, obj);
-        obj.setPosition( new Vecteur2<Integer>(pos.getX() * this.getGrille().getLargeurCases(), pos.getY() * this.getGrille().getHauteurCases()));
+
+        obj.onPreAjout(getGrille().getMatrice().get(pos.getX()).get(pos.getY()) );
+
+        obj.setPosition( new Vecteur2<>(
+                 pos.getX() * this.getGrille().getLargeurCases(),
+                 pos.getY() * this.getGrille().getHauteurCases()));
+        obj.onAjoute(getGrille().getMatrice().get(pos.getX()).get(pos.getY()) );
+
+        obj.dessiner().forEach(dessin -> fenetre.ajouter(dessin));
+
+    }
+
+
+
+    public void ajouter(Vecteur2<Integer> pos, Acteur obj, Placement placement){
+        getGrille().ajouter(pos, obj);
+
+        obj.onPreAjout(getGrille().getMatrice().get(pos.getX()).get(pos.getY()) );
+
+        switch (placement) {
+            case MILIEU:
+                obj.setPosition(new Vecteur2<>(
+                    pos.getX() * this.getGrille().getLargeurCases() + Math.floorDiv(getGrille().getLargeurCases(), 2),
+                    pos.getY() * this.getGrille().getHauteurCases() + Math.floorDiv(getGrille().getHauteurCases(), 2)
+                ));
+            break;
+        }
         obj.onAjoute(getGrille().getMatrice().get(pos.getX()).get(pos.getY()) );
 
         obj.dessiner().forEach(dessin -> fenetre.ajouter(dessin));
