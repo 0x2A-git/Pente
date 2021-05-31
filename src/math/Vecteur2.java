@@ -48,10 +48,6 @@ public class Vecteur2<T extends Number> {
         return this.y;
     }
 
-
-
-
-
     public double getDistance(){
         return Math.sqrt( Math.pow(this.x.longValue(), 2) + Math.pow(this.y.longValue(), 2) );
     }
