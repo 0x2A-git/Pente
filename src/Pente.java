@@ -112,7 +112,9 @@ public class Pente {
         // Dialogue des paramètres de la partie
         JDialog parametresPartieFrame = new JDialog(fenetrePrincipale, "Paramètres de la partie", true);
         final JDialog d = new JDialog();
-        d.setVisible(true);
+        d.setSize(200,200);
+        d.setLocationRelativeTo(null);
+        d.setVisible(false);
 
         parametresPartieFrame.addWindowListener(new WindowListener() {
             @Override
