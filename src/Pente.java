@@ -1,5 +1,4 @@
 import MG2D.*;
-import MG2D.geometrie.Point;
 import MG2D.geometrie.Texte;
 import math.Vecteur2;
 
@@ -41,8 +40,6 @@ public class Pente {
 
         scenePrincipale.getGrille().getMatrice().get(1).get(1).etendreColonne(5);
         scenePrincipale.getGrille().getMatrice().get(1).get(1).etendreLigne(5);
-
-        Case caseDepart = scenePrincipale.getGrille().getMatrice().get(1).get(1);
 
         // La position est passée par référence, ainsi lorsque la case de départ bouge la grille bouge avec
 
@@ -111,6 +108,7 @@ public class Pente {
 
         // Dialogue des paramètres de la partie
         JDialog parametresPartieFrame = new JDialog(fenetrePrincipale, "Paramètres de la partie", true);
+
         final JDialog d = new JDialog();
         d.setSize(200,200);
         d.setLocationRelativeTo(null);
@@ -301,6 +299,20 @@ public class Pente {
                 }
 
 
+                // Zone de texte concernant l'avancé de la partie
+
+                ZoneTexte joueursZoneTexte = new ZoneTexte();
+
+                Texte joueurActuel = new Texte();
+                Texte joueurSuivant = new Texte();
+
+                joueursZoneTexte.ajouterTexte(joueurActuel);
+                joueursZoneTexte.ajouterTexte(joueurSuivant);
+
+                scenePrincipale.ajouter(new Vecteur2<>(1, 0), joueursZoneTexte, Scene.Placement.MILIEU);
+
+
+
 
                 // Bouton démarrer
                 JButton validerBtn = new JButton("Valider");
@@ -315,25 +327,18 @@ public class Pente {
 
                         Jeu.getInstance().getJoueursQueue().addAll(joueurs);
 
+                        
+                        joueurActuel.setTexte("");
+                        joueurSuivant.setTexte(String.format("Joueur qui démarre : %s %s",
+                        Jeu.getInstance().getJoueursQueue().peek().getNom(),
+                        Jeu.getInstance().getJoueursQueue().peek().getPrenom()
+                        ));
+
+
+
                         parametresPartieFrame.dispose();
 
                         Jeu.getInstance().setJoueurActuel(Jeu.getInstance().getJoueursQueue().poll());
-
-                        // Zone de texte concernant l'avancé de la partie
-
-                        ZoneTexte joueursZoneTexte = new ZoneTexte(
-
-                        );
-
-                        Texte joueurActuel = new Texte();
-                        joueurActuel.setTexte("");
-                        Texte joueurSuivant = new Texte();
-                        joueurSuivant.setTexte("");
-
-                        joueursZoneTexte.ajouterTexte(joueurActuel);
-                        joueursZoneTexte.ajouterTexte(joueurSuivant);
-
-                        scenePrincipale.ajouter(new Vecteur2<>(1, 0), joueursZoneTexte, Scene.Placement.MILIEU);
 
                         // Zone de texte spécifique au joueur actuel
 
@@ -341,10 +346,13 @@ public class Pente {
 
 
                         Texte pionsJoueurActuel = new Texte();
+                        Texte nombreCapture = new Texte();
 
                         pionsJoueurActuel.setTexte("");
+                        nombreCapture.setTexte("");
 
                         joueurZoneTexte.ajouterTexte(pionsJoueurActuel);
+                        joueurZoneTexte.ajouterTexte(nombreCapture);
 
                         scenePrincipale.ajouter(new Vecteur2<>(3, 0), joueurZoneTexte, Scene.Placement.MILIEU);
 
@@ -356,18 +364,29 @@ public class Pente {
 
                                 // Màj de l'interface
 
-                                joueurActuel.setTexte(String.format("Joueur Actuel : %s %s",
+                                joueurActuel.setTexte(String.format("Prochain Joueur : %s %s",
                                         Jeu.getInstance().getJoueurActuel().getNom(),
-                                        Jeu.getInstance().getJoueurActuel().getPrenom()));
+                                        Jeu.getInstance().getJoueurActuel().getPrenom()
+                                        )
+                                        );
 
-                                joueurSuivant.setTexte(String.format("Prochain Joueur : %s %s",
+                                joueurSuivant.setTexte(String.format("Joueur Actuel : %s %s",
                                         Jeu.getInstance().getJoueursQueue().peek().getNom(),
-                                        Jeu.getInstance().getJoueursQueue().peek().getPrenom()));
+                                        Jeu.getInstance().getJoueursQueue().peek().getPrenom()
+                                        )
+                                        );
 
                                 pionsJoueurActuel.setTexte(
                                         String.format("Pions du joueur actuel : %d",
-                                                Jeu.getInstance().getJoueurActuel().getNbrPions())
-                                );
+                                                Jeu.getInstance().getJoueurActuel().getNbrPions()
+                                                )
+                                                );
+
+                                nombreCapture.setTexte(
+                                    String.format("Nombre de caputre : %d",
+                                            Jeu.getInstance().getJoueurActuel().getNbrCapture()
+                                            )
+                                            );
 
                             }
                         });
@@ -398,7 +417,6 @@ public class Pente {
 
         parametresPartieFrame.getContentPane().add(parametresPartiePanel);
         parametresPartieFrame.pack();
-        parametresPartieFrame.setLocationRelativeTo(null);
         parametresPartieFrame.setVisible(true);
         while(!clavier.getEchapTape()) {
             try {

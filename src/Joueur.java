@@ -1,7 +1,4 @@
 import MG2D.Couleur;
-
-import java.awt.*;
-import java.lang.ref.Reference;
 import java.util.ArrayList;
 
 public class Joueur{
