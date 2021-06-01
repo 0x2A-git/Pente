@@ -1,5 +1,4 @@
 import MG2D.*;
-import MG2D.geometrie.Point;
 import MG2D.geometrie.Texte;
 import math.Vecteur2;
 
@@ -109,10 +108,6 @@ public class Pente {
 
         // Dialogue des paramètres de la partie
         JDialog parametresPartieFrame = new JDialog(fenetrePrincipale, "Paramètres de la partie", true);
-        final JDialog d = new JDialog();
-        d.setSize(200,200);
-        d.setLocationRelativeTo(null);
-        d.setVisible(true);
 
         parametresPartieFrame.addWindowListener(new WindowListener() {
             @Override
@@ -417,7 +412,6 @@ public class Pente {
 
         parametresPartieFrame.getContentPane().add(parametresPartiePanel);
         parametresPartieFrame.pack();
-        parametresPartieFrame.setLocationRelativeTo(null);
         parametresPartieFrame.setVisible(true);
         while(!clavier.getEchapTape()) {
             try {
