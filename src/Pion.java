@@ -2,7 +2,6 @@ import MG2D.Couleur;
 import MG2D.geometrie.Cercle;
 import MG2D.geometrie.Dessin;
 import MG2D.geometrie.Point;
-import MG2D.geometrie.Texture;
 import math.Vecteur2;
 
 import java.awt.event.MouseEvent;
