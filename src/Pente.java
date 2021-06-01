@@ -341,10 +341,13 @@ public class Pente {
 
 
                         Texte pionsJoueurActuel = new Texte();
+                        Texte nombreCapture = new Texte();
 
                         pionsJoueurActuel.setTexte("");
+                        nombreCapture.setTexte("");
 
                         joueurZoneTexte.ajouterTexte(pionsJoueurActuel);
+                        joueurZoneTexte.ajouterTexte(nombreCapture);
 
                         scenePrincipale.ajouter(new Vecteur2<>(3, 0), joueurZoneTexte, Scene.Placement.MILIEU);
 
@@ -358,16 +361,27 @@ public class Pente {
 
                                 joueurActuel.setTexte(String.format("Prochain Joueur : %s %s",
                                         Jeu.getInstance().getJoueurActuel().getNom(),
-                                        Jeu.getInstance().getJoueurActuel().getPrenom()));
+                                        Jeu.getInstance().getJoueurActuel().getPrenom()
+                                        )
+                                        );
 
                                 joueurSuivant.setTexte(String.format("Joueur Actuel : %s %s",
                                         Jeu.getInstance().getJoueursQueue().peek().getNom(),
-                                        Jeu.getInstance().getJoueursQueue().peek().getPrenom()));
+                                        Jeu.getInstance().getJoueursQueue().peek().getPrenom()
+                                        )
+                                        );
 
                                 pionsJoueurActuel.setTexte(
                                         String.format("Pions du joueur actuel : %d",
-                                                Jeu.getInstance().getJoueurActuel().getNbrPions())
-                                );
+                                                Jeu.getInstance().getJoueurActuel().getNbrPions()
+                                                )
+                                                );
+
+                                nombreCapture.setTexte(
+                                    String.format("Nombre de caputre : %d",
+                                            Jeu.getInstance().getJoueurActuel().getNbrCapture()
+                                            )
+                                            );
 
                             }
                         });
