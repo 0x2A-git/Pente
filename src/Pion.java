@@ -2,7 +2,6 @@ import MG2D.Couleur;
 import MG2D.geometrie.Cercle;
 import MG2D.geometrie.Dessin;
 import MG2D.geometrie.Point;
-import MG2D.geometrie.Texture;
 import math.Vecteur2;
 
 import java.awt.event.MouseEvent;
@@ -13,20 +12,11 @@ import java.util.ArrayList;
  * Représente le pion qui peut être placé dans le jeu de la pente
  * */
 
-/**
- * **** Dev *****
- * Si quelqu'un peut commencer à dev des méthodes de base pour pouvoir l'utiliser plus tard ce serait cool.
- * - LM
- */
 
 public  class Pion extends Acteur {
 
-    /**
-     * Pas encore sûr de mettre en attribut les objets de type Dessin ça peut devenir rapidement compliqué pour rien.
-     * Je me demande si on peut pas faire une implémentation sur Acteur avec une interface du style Dessinable.
-     * - LM
-     * */
-    Texture texture = null;
+
+    Couleur couleur = Couleur.MAGENTA; // Magenta pour debug
 
     /**
      * Constructeur par défaut du Pion
@@ -34,7 +24,12 @@ public  class Pion extends Acteur {
     public Pion(Vecteur2<Integer> position){
         super(position);
 
-        System.out.println(position.getX());
+    }
+
+    public Pion(Vecteur2<Integer> position, Couleur couleur){
+        super(position);
+        this.couleur = couleur;
+
     }
 
     /**
@@ -42,7 +37,8 @@ public  class Pion extends Acteur {
      * */
 
     public Pion(Pion that){
-        super(new Vecteur2<Integer>(that.getPosition().getX(), that.getPosition().getY()));
+        super(new Vecteur2<>(that.getPosition().getX(), that.getPosition().getY()));
+        this.couleur = that.couleur;
 
     }
 
@@ -56,7 +52,7 @@ public  class Pion extends Acteur {
     public ArrayList<Dessin> dessiner() {
         System.out.println("Pion :" + position.getX() + ", " + position.getY());
         Cercle cercle = new Cercle(
-                Couleur.MAGENTA,
+                couleur,
                 new Point(getPosition().getX(),getPosition().getY()),
                 //Jeu.getInstance().getScene().getGrille().getHauteurCases()
                 10
@@ -68,6 +64,11 @@ public  class Pion extends Acteur {
 
     @Override
     public void mettreAJours() {
+
+    }
+
+    @Override
+    public void onPreAjout(Case caseActuelle) {
 
     }
 

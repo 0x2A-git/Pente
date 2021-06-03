@@ -76,7 +76,6 @@ public class Grille implements Case.Callbacks {
 
 
     /**
-     * TODO : Bind resize fenêtre
      * @param largeur - Largeur de la grille en pixels
      * @param hauteur - Hauteur de la grille en pixels
      * @param lignes - Nombre de lignes
@@ -296,8 +295,7 @@ public class Grille implements Case.Callbacks {
                 d.add(l);
                 // Dessin lignes verticales
                 Point s2 = new Point(
-                        x * caseActuelle.getLargeur(),
-                        y * caseActuelle.getHauteur()
+                        s1
                 );
 
                 s2.setX(s2.getX() + getPosition().getX());
@@ -393,7 +391,6 @@ public class Grille implements Case.Callbacks {
      * */
     public void setColonnes(int nbColonnes){
         this.colonnes = nbColonnes;
-        // TODO : Réadapter layout
     }
 
     /**
@@ -408,7 +405,6 @@ public class Grille implements Case.Callbacks {
     public void setLignes(int nbLignes){
         this.lignes = nbLignes;
 
-        // TODO : même que setColonnes
     }
 
     /**

@@ -9,6 +9,13 @@ import java.util.ArrayList;
 
 public class Plateau extends Acteur {
 
+
+    public interface OnPionPlaceListener {
+        void onPionPlaceListener(Case casePlacement, Pion pion);
+    }
+
+    ArrayList<OnPionPlaceListener> onPionPlaceListeners = new ArrayList<>();
+
     // Grille de jeu
     Grille grille = null;
 
@@ -50,15 +57,18 @@ public class Plateau extends Acteur {
 
         Case caseActuelle = getGrille().getCase(localCoords);
 
+        // Evite 2 pions sur la même case, pas gênant vu qu'on ne peut placer qu'un objet par case
         if(caseActuelle.getObjets().size() > 0)
             return;
 
 
-        Acteur pion = new Pion(
+        // Va créer un nouveau pion sur le plateau et met la couleur du joueur
+        Pion pion = new Pion(
                 new Vecteur2<>(
                         getGrille().getPosition().getX() + caseActuelle.getPosition().getX() * getGrille().getLargeurCases(),
                         getGrille().getPosition().getY() + caseActuelle.getPosition().getY() * getGrille().getHauteurCases()
-                )
+                ),
+                Jeu.getInstance().getJoueurActuel().getCouleur()
         );
 
         getGrille().ajouter(
@@ -68,7 +78,11 @@ public class Plateau extends Acteur {
 
         Jeu.getInstance().dessiner(pion.dessiner());
 
+        this.onPionPlaceListeners.forEach(c -> c.onPionPlaceListener(caseActuelle, pion));
 
+
+        Jeu.getInstance().getJoueursQueue().add(Jeu.getInstance().getJoueurActuel());
+        Jeu.getInstance().setJoueurActuel(Jeu.getInstance().getJoueursQueue().poll());
 
     }
 
@@ -199,6 +213,11 @@ public class Plateau extends Acteur {
     }
 
     @Override
+    public void onPreAjout(Case caseActuelle) {
+
+    }
+
+    @Override
     public void onMisAJour() {
 
     }
@@ -211,5 +230,9 @@ public class Plateau extends Acteur {
     @Override
     public void onDessine() {
 
+    }
+
+    public void ajouterOnPionPlaceListerner(OnPionPlaceListener listener){
+        this.onPionPlaceListeners.add(listener);
     }
 }
