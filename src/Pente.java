@@ -181,7 +181,9 @@ public class Pente {
                 parametresPartieFrame.setTitle("Ajouter les joueurs");
                 JPanel creationJoueurPanel = new JPanel();
 
+                // Menu des couleurs
                 HashMap<String, MG2D.Couleur> couleursDisponibles = new HashMap<>(Map.ofEntries(
+                        Map.entry(" ", Couleur.NOIR),
                         Map.entry("Jaune", Couleur.JAUNE),
                         Map.entry("Rouge", Couleur.ROUGE),
                         Map.entry("Bleu", Couleur.BLEU),
@@ -201,6 +203,14 @@ public class Pente {
 
 
 
+                // Stock les références fortes des JComboBox de chaque joueur dans un tableau
+                ArrayList<JComboBox<String>> referencesChoixCouleur = new ArrayList<>();
+
+
+                // Bouton démarrer
+                JButton validerBtn = new JButton("Valider");
+
+                validerBtn.setEnabled(false);
 
                 // Pour chaque joueur...
 
@@ -214,17 +224,42 @@ public class Pente {
 
                     joueurPanel.add(new JLabel("Joueur " + (i + 1)));
 
+                    joueurPanel.add(new JLabel("Choisir couleur : "));
+
                     // Sélection couleur
 
                     JComboBox<String> selectionCouleursComboBox = new JComboBox<>(couleursDisponibles.keySet().toArray(new String[0]));
 
-                    selectionCouleursComboBox.addActionListener(new ActionListener() {
+                    // Ajoute la référence forte au tableau
+                    referencesChoixCouleur.add(selectionCouleursComboBox);
+                    
+                    selectionCouleursComboBox.addItemListener(new ItemListener() {
                         @Override
-                        public void actionPerformed(ActionEvent actionEvent) {
+                        public void itemStateChanged(ItemEvent item) {                            
+                           
+                            // Switch en fonction de l'event de l'item
+                            switch(item.getStateChange()){
+                                case ItemEvent.SELECTED:
 
-                            joueur.setCouleur(
-                                    couleursDisponibles.get( String.valueOf(selectionCouleursComboBox.getSelectedItem()) )
-                            );
+                                    joueur.setCouleur( couleursDisponibles.get( String.valueOf( item.getItem() )) );
+                                    selectionCouleursComboBox.setSelectedItem(selectionCouleursComboBox.getSelectedItem());
+                                    
+                                    // Empêche de selectionner une couleur déjà prise
+                                    selectionCouleursComboBox.setEnabled(false);
+                                    referencesChoixCouleur.remove(selectionCouleursComboBox);
+                                    referencesChoixCouleur.forEach(comboBox ->
+                                        comboBox.removeItemAt( selectionCouleursComboBox.getSelectedIndex() )
+                                    );
+
+                                    // Si plus de références dans le tableau alors toutes les couleurs sont sélectionnées 
+                                    if(referencesChoixCouleur.size() == 0)
+                                        validerBtn.setEnabled(true);
+
+                                    break;
+
+                                default:
+                                    break;
+                            }
 
                         }
                     });
@@ -309,8 +344,7 @@ public class Pente {
 
 
 
-                // Bouton démarrer
-                JButton validerBtn = new JButton("Valider");
+                
 
                 validerBtn.addActionListener(new ActionListener() {
                     @Override
