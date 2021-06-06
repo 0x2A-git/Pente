@@ -68,7 +68,6 @@ public class Pente {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
 
-                System.out.println(fenetrePrincipale.getInsets());
 
                 // Conversion du clique de souris en coordonnées de la grille
                 int xGrid =
@@ -79,7 +78,6 @@ public class Pente {
                         scenePrincipale.getGrille().getHauteur() - mouseEvent.getY() + fenetrePrincipale.getInsets().top,
                         scenePrincipale.getGrille().getHauteurCases());
 
-                System.out.println(xGrid - 1 + ", " + yGrid);
 
                 // Trigger l'event case cliquee
                 scenePrincipale.getGrille().onCaseCliquee(new Vecteur2<>(xGrid - 1, yGrid), mouseEvent);
@@ -354,6 +352,101 @@ public class Pente {
                         plateau.ajouterOnPionPlaceListerner(new Plateau.OnPionPlaceListener() {
                             @Override
                             public void onPionPlaceListener(Case casePlacement, Pion pion) {
+
+                                int nbAlignementX = 0;
+                                int nbAlignementY = 0;
+
+
+                                /**
+                                 * Regarde 5 voisins en horizontal, en vertical et en diagonal
+                                 */
+                                for(int x = Math.max(casePlacement.getPosition().getX() - 5, 0);
+                                    x < Math.min(casePlacement.getPosition().getX() + 5, plateau.getGrille().getMatrice().size()); x++)
+                                {
+
+
+                                    for (int y = Math.max(casePlacement.getPosition().getY() - 5, 0);
+                                        y < Math.min(casePlacement.getPosition().getY() + 5, plateau.getGrille().getMatrice().get(0).size());
+                                        y++)
+                                    {
+
+                                        // Check en vertical
+                                        Case caseScannee = plateau.getGrille().getCase(x, y);
+
+
+                                        if (caseScannee.getObjets().size() < 1)
+                                            continue;
+
+                                        if (caseScannee.getObjets().get(0).getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur())
+                                            nbAlignementY += 1;
+                                        else
+                                            nbAlignementY = 0;
+                                    }
+
+                                    if(nbAlignementY == 5)
+                                        System.out.println("Gagné en vertical");
+
+                                    nbAlignementY = 0;
+
+                                    // On check en horizontal
+
+                                    Case caseX = plateau.getGrille().getCase(x, casePlacement.getPosition().getY());
+
+                                    if(caseX.getObjets().size() < 1) continue;
+
+                                    if (caseX.getObjets().get(0).getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur())
+                                        nbAlignementX += 1;
+                                    else
+                                        nbAlignementX = 0;
+
+
+                                    if(nbAlignementX == 5)
+                                        System.out.println("Gagné en horizontal");
+
+
+
+                                }
+
+                                System.out.println("Pion place à :" + casePlacement.getPosition().getX() + ", " + casePlacement.getPosition().getY());
+
+                                int nbDiagonaleDroite = 0;
+                                for(int x = -5; x < 5; x++){
+
+                                    //Math.min(Math.max(localCoords.getX(), 0), getGrille().getMatrice().size() - 1)
+                                    Case caseDiagonaleDroite = plateau.getGrille().getCase(
+                                            Math.min(Math.max(casePlacement.getPosition().getX() + x, 0), plateau.getGrille().getMatrice().size() - 1),
+                                            Math.min(Math.max(casePlacement.getPosition().getY() + x, 0), plateau.getGrille().getMatrice().get(0).size() - 1));
+
+                                    if(caseDiagonaleDroite.getObjets().size() < 1) continue;
+
+                                    if (caseDiagonaleDroite.getObjets().get(0).getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur())
+                                        nbDiagonaleDroite += 1;
+
+                                }
+
+                                if(nbDiagonaleDroite == 5)
+                                    System.out.println("Gagné en diagonale droite");
+
+                                System.out.println("Diagonale droite : " + nbDiagonaleDroite);
+
+                                int nbDiagonaleGauche = 0;
+                                for(int x = -5; x < 5; x++){
+
+                                    Case caseDiagonaleGauche = plateau.getGrille().getCase(
+                                            Math.min(Math.max(casePlacement.getPosition().getX() - x, 0), plateau.getGrille().getMatrice().size() - 1),
+                                            Math.min(Math.max(casePlacement.getPosition().getY() + x, 0), plateau.getGrille().getMatrice().get(0).size() - 1)
+                                    );
+
+                                    if(caseDiagonaleGauche.getObjets().size() < 1) continue;
+
+                                    if (caseDiagonaleGauche.getObjets().get(0).getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur())
+                                        nbDiagonaleGauche += 1;
+
+                                    //
+                                }
+
+                                if(nbDiagonaleGauche == 5)
+                                    System.out.println("Gagné en diagonale gauche");
 
                                 Jeu.getInstance().getJoueurActuel().ajouterPion(pion);
 
