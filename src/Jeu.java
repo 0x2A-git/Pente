@@ -25,6 +25,8 @@ public class Jeu {
 
     private int nbJoueurs = -1;
 
+    private ArrayList<String> logs = new ArrayList<>();
+
 
     private Jeu(){
         super();
@@ -95,5 +97,13 @@ public class Jeu {
 
     public void setJoueurActuel(Joueur j){
         this.joueurActuel = j;
+    }
+
+    public ArrayList<String> getLogs(){
+        return this.logs;
+    }
+
+    public void ajouterLog(String log){
+        this.logs.add(log);
     }
 }

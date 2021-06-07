@@ -18,6 +18,49 @@ public class Pente {
 
         Fenetre fenetrePrincipale = new Fenetre("Test", 800, 600);
 
+        JMenuBar menuBar = new JMenuBar();
+
+        JMenu menu = new JMenu("Jeu");
+
+        JMenuItem historique = new JMenuItem("Historique");
+
+
+        historique.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                System.out.println("Historique ouvert");
+                JDialog historiqueFrame = new JDialog(fenetrePrincipale, "Historique", true);
+
+
+                JPanel logsPanel = new JPanel();
+
+                logsPanel.setLayout(new BoxLayout(logsPanel, BoxLayout.Y_AXIS));
+
+                DefaultListModel<String> logs = new DefaultListModel<>();
+
+                logs.addAll(Jeu.getInstance().getLogs());
+
+                JList<String> listeLogs = new JList<String>(logs);
+
+
+                logsPanel.add(new JScrollPane(listeLogs) );
+                logsPanel.add(new JButton("ok"));
+
+                historiqueFrame.add(logsPanel);
+
+
+                historiqueFrame.pack();
+                historiqueFrame.getContentPane().validate();
+                historiqueFrame.getContentPane().repaint();
+                historiqueFrame.setVisible(true);
+            }
+        });
+
+        menu.add(historique);
+
+        menuBar.add(menu);
+        fenetrePrincipale.setJMenuBar(menuBar);
+
         Jeu jeu = Jeu.getInstance();
 
 
@@ -56,6 +99,7 @@ public class Pente {
 
         Clavier clavier = fenetrePrincipale.getClavier();
         fenetrePrincipale.addKeyListener(clavier);
+
 
         scenePrincipale.getGrille().addOnCaseCliqueeCallback(new Grille.OnCaseCliqueeListener() {
             @Override
@@ -174,7 +218,6 @@ public class Pente {
         demarrerBouton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
 
                 parametresPartieFrame.setTitle("Ajouter les joueurs");
                 JPanel creationJoueurPanel = new JPanel();
@@ -383,9 +426,18 @@ public class Pente {
                                             nbAlignementY = 0;
                                     }
 
-                                    if(nbAlignementY == 5)
+                                    if(nbAlignementY == 5) {
                                         System.out.println("Gagné en vertical");
 
+
+                                        Jeu.getInstance().ajouterLog(
+                                                String.format(
+                                                        "Le joueur %s %s a gagné grâce à un placement en vertical",
+                                                        Jeu.getInstance().getJoueurActuel().getNom(),
+                                                        Jeu.getInstance().getJoueurActuel().getPrenom()
+                                                )
+                                        );
+                                    }
                                     nbAlignementY = 0;
 
                                     // On check en horizontal
@@ -400,9 +452,17 @@ public class Pente {
                                         nbAlignementX = 0;
 
 
-                                    if(nbAlignementX == 5)
+                                    if(nbAlignementX == 5) {
                                         System.out.println("Gagné en horizontal");
 
+                                        Jeu.getInstance().ajouterLog(
+                                                String.format(
+                                                        "Le joueur %s %s a gagné grâce à un placement en horizontal",
+                                                        Jeu.getInstance().getJoueurActuel().getNom(),
+                                                        Jeu.getInstance().getJoueurActuel().getPrenom()
+                                                )
+                                        );
+                                    }
 
 
                                 }
@@ -412,7 +472,6 @@ public class Pente {
                                 int nbDiagonaleDroite = 0;
                                 for(int x = -5; x < 5; x++){
 
-                                    //Math.min(Math.max(localCoords.getX(), 0), getGrille().getMatrice().size() - 1)
                                     Case caseDiagonaleDroite = plateau.getGrille().getCase(
                                             Math.min(Math.max(casePlacement.getPosition().getX() + x, 0), plateau.getGrille().getMatrice().size() - 1),
                                             Math.min(Math.max(casePlacement.getPosition().getY() + x, 0), plateau.getGrille().getMatrice().get(0).size() - 1));
@@ -424,9 +483,17 @@ public class Pente {
 
                                 }
 
-                                if(nbDiagonaleDroite == 5)
+                                if(nbDiagonaleDroite == 5) {
                                     System.out.println("Gagné en diagonale droite");
 
+                                    Jeu.getInstance().ajouterLog(
+                                            String.format(
+                                                    "Le joueur %s %s a gagné grâce à un placement en diagonale ( droite )",
+                                                    Jeu.getInstance().getJoueurActuel().getNom(),
+                                                    Jeu.getInstance().getJoueurActuel().getPrenom()
+                                            )
+                                    );
+                                }
                                 System.out.println("Diagonale droite : " + nbDiagonaleDroite);
 
                                 int nbDiagonaleGauche = 0;
@@ -445,10 +512,29 @@ public class Pente {
                                     //
                                 }
 
-                                if(nbDiagonaleGauche == 5)
+                                if(nbDiagonaleGauche == 5) {
                                     System.out.println("Gagné en diagonale gauche");
 
+                                    Jeu.getInstance().ajouterLog(
+                                            String.format(
+                                                    "Le joueur %s %s a gagné grâce à un placement en diagonale ( gauche )",
+                                                    Jeu.getInstance().getJoueurActuel().getNom(),
+                                                    Jeu.getInstance().getJoueurActuel().getPrenom()
+                                            )
+                                    );
+                                }
+
                                 Jeu.getInstance().getJoueurActuel().ajouterPion(pion);
+
+                                Jeu.getInstance().ajouterLog(
+                                        String.format(
+                                                "Le joueur %s %s a placé un pion en %d, %d",
+                                                Jeu.getInstance().getJoueurActuel().getNom(),
+                                                Jeu.getInstance().getJoueurActuel().getPrenom(),
+                                                casePlacement.getPosition().getX(),
+                                                casePlacement.getPosition().getY()
+                                                )
+                                );
 
                                 // Màj de l'interface
 
@@ -476,6 +562,8 @@ public class Pente {
                                             )
                                             );
 
+                                fenetrePrincipale.rafraichir();
+
                             }
                         });
 
@@ -496,27 +584,19 @@ public class Pente {
 
 
                 parametresPartieFrame.pack();
-                parametresPartieFrame.getContentPane().validate();
-                parametresPartieFrame.getContentPane().repaint();
 
             }
         });
 
 
+        fenetrePrincipale.rafraichir();
+        fenetrePrincipale.repaint();
+        fenetrePrincipale.revalidate();
         parametresPartieFrame.getContentPane().add(parametresPartiePanel);
         parametresPartieFrame.pack();
         parametresPartieFrame.setVisible(true);
-        while(!clavier.getEchapTape()) {
-            try {
-                Thread.sleep(200);
-            } catch(Exception ex){
 
-                System.exit(-1);
 
-            }
-            fenetrePrincipale.rafraichir();
-        }
-        fenetrePrincipale.fermer();
 
 
     }
