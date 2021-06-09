@@ -3,18 +3,17 @@ import math.Vecteur2;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Représente un objet quelconque dans une scène
  * */
 public abstract class Acteur {
 
+    // Va stocker les composants de l'acteur
+    protected HashMap< String, Composant<? extends Composant.Callbacks> > composants = new HashMap();
+
     protected Vecteur2<Integer> position;
-    /**
-     * Je pense qu'on pourrait utiliser un String pour identifier chaque Acteur, ça nous permettrait de pouvoir
-     * utiliser une HashMap et du coup avoir une complexité en O(1) pour le CPU quand on a besoin de récup un objet.
-     * - LM
-     * */
 
     protected String id = "";
 
@@ -42,6 +41,9 @@ public abstract class Acteur {
     public abstract ArrayList<Dessin> dessiner();
     public abstract void mettreAJours();
 
+    public ArrayList<Dessin> getDessins(){
+        return this.dessins;
+    }
     // Events
 
     /**
@@ -56,4 +58,33 @@ public abstract class Acteur {
     public abstract void onDessine();
 
     public abstract void onClique(MouseEvent event);
+
+    /**
+     * Ajout d'un composant
+     * @param composant - Composant à ajouter ( ex: MonComposant.class )
+     */
+    public <T extends Composant.Callbacks> void ajouterComposant(Class<T> composant) {
+        Composant<T> cmp = new Composant<T>(composant);
+
+        if(this.composants.containsKey(composant.getName())) {
+            System.out.println("[ERREUR -> Composant] : Composant déjà existant sur l'acteur");
+            return;
+        }
+
+
+        this.composants.put(composant.getName(), cmp);
+
+        cmp.get().onAttache(this);
+
+    }
+
+    /**
+     * Récupérer un composant
+     *
+     * @param composant - Composant à récupérer ( ex : MonComposant.class )
+     * @return - Retourne le composant spécifié en paramètre
+     */
+    public <T extends Composant.Callbacks> T getComposant(Class<T> composant){
+        return composant.cast( composants.get(composant.getName()).get() );
+    }
 }

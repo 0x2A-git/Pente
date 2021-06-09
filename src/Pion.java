@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public  class Pion extends Acteur {
 
 
-    Couleur couleur = Couleur.MAGENTA; // Magenta pour debug
+    //Couleur couleur = Couleur.MAGENTA; // Magenta pour debug
 
     /**
      * Constructeur par défaut du Pion
@@ -28,8 +28,10 @@ public  class Pion extends Acteur {
 
     public Pion(Vecteur2<Integer> position, Couleur couleur){
         super(position);
-        this.couleur = couleur;
 
+        ajouterComposant(ColorableComposant.class);
+
+        getComposant(ColorableComposant.class).setCouleur(couleur);
     }
 
     /**
@@ -38,7 +40,7 @@ public  class Pion extends Acteur {
 
     public Pion(Pion that){
         super(new Vecteur2<>(that.getPosition().getX(), that.getPosition().getY()));
-        this.couleur = that.couleur;
+        //this.couleur = that.couleur;
 
     }
 
@@ -52,7 +54,7 @@ public  class Pion extends Acteur {
     public ArrayList<Dessin> dessiner() {
         System.out.println("Pion :" + position.getX() + ", " + position.getY());
         Cercle cercle = new Cercle(
-                couleur,
+                getComposant(ColorableComposant.class).getCouleur(),
                 new Point(getPosition().getX(),getPosition().getY()),
                 //Jeu.getInstance().getScene().getGrille().getHauteurCases()
                 10

@@ -207,6 +207,157 @@ public class Plateau extends Acteur {
         return dessins;
     }
 
+
+    private boolean getVictoireHorizontaleVerticale(Case casePlacement){
+
+        int nbAlignementX = 0;
+        int nbAlignementY = 0;
+
+
+        /**
+         * Regarde 5 voisins en horizontal, en vertical et en diagonal
+         */
+        for(int x = Math.max(casePlacement.getPosition().getX() - 5, 0);
+            x < Math.min(casePlacement.getPosition().getX() + 5, this.getGrille().getMatrice().size()); x++)
+        {
+
+
+            for (int y = Math.max(casePlacement.getPosition().getY() - 5, 0);
+                 y < Math.min(casePlacement.getPosition().getY() + 5, this.getGrille().getMatrice().get(0).size());
+                 y++)
+            {
+
+                // Check en vertical
+                Case caseScannee = this.getGrille().getCase(x, y);
+
+
+                if (caseScannee.getObjets().size() < 1)
+                    continue;
+
+                if (caseScannee.getObjets().get(0).getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur())
+                    nbAlignementY += 1;
+                else
+                    nbAlignementY = 0;
+            }
+
+            if(nbAlignementY == 5) {
+                System.out.println("Gagné en vertical");
+
+                Jeu.getInstance().ajouterLog(
+                        String.format(
+                                "Le joueur %s %s a gagné grâce à un placement en vertical",
+                                Jeu.getInstance().getJoueurActuel().getNom(),
+                                Jeu.getInstance().getJoueurActuel().getPrenom()
+                        )
+                );
+
+                return true;
+            }
+            nbAlignementY = 0;
+
+            // On check en horizontal
+
+            Case caseX = this.getGrille().getCase(x, casePlacement.getPosition().getY());
+
+            if(caseX.getObjets().size() < 1) continue;
+
+            if (caseX.getObjets().get(0).getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur())
+                nbAlignementX += 1;
+            else
+                nbAlignementX = 0;
+
+
+            if(nbAlignementX == 5) {
+
+                System.out.println("Gagné en horizontal");
+
+                Jeu.getInstance().ajouterLog(
+                        String.format(
+                                "Le joueur %s %s a gagné grâce à un placement en horizontal",
+                                Jeu.getInstance().getJoueurActuel().getNom(),
+                                Jeu.getInstance().getJoueurActuel().getPrenom()
+                        )
+                );
+
+                return true;
+            }
+
+
+        }
+
+        return false;
+    }
+
+
+    private boolean getVictoireDiagonale(Case casePlacement){
+        int nbDiagonaleDroite = 0;
+        for(int x = -5; x < 5; x++){
+
+            Case caseDiagonaleDroite = this.getGrille().getCase(
+                    Math.min(Math.max(casePlacement.getPosition().getX() + x, 0), this.getGrille().getMatrice().size() - 1),
+                    Math.min(Math.max(casePlacement.getPosition().getY() + x, 0), this.getGrille().getMatrice().get(0).size() - 1));
+
+            if(caseDiagonaleDroite.getObjets().size() < 1) continue;
+
+            if (caseDiagonaleDroite.getObjets().get(0).getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur())
+                nbDiagonaleDroite += 1;
+
+        }
+
+        if(nbDiagonaleDroite == 5) {
+            System.out.println("Gagné en diagonale droite");
+
+            Jeu.getInstance().ajouterLog(
+                    String.format(
+                            "Le joueur %s %s a gagné grâce à un placement en diagonale ( droite )",
+                            Jeu.getInstance().getJoueurActuel().getNom(),
+                            Jeu.getInstance().getJoueurActuel().getPrenom()
+                    )
+            );
+
+            return true;
+        }
+        System.out.println("Diagonale droite : " + nbDiagonaleDroite);
+
+        int nbDiagonaleGauche = 0;
+        for(int x = -5; x < 5; x++){
+
+            Case caseDiagonaleGauche = this.getGrille().getCase(
+                    Math.min(Math.max(casePlacement.getPosition().getX() - x, 0), this.getGrille().getMatrice().size() - 1),
+                    Math.min(Math.max(casePlacement.getPosition().getY() + x, 0), this.getGrille().getMatrice().get(0).size() - 1)
+            );
+
+            if(caseDiagonaleGauche.getObjets().size() < 1) continue;
+
+            if (caseDiagonaleGauche.getObjets().get(0).getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur())
+                nbDiagonaleGauche += 1;
+
+            //
+        }
+
+        if(nbDiagonaleGauche == 5) {
+            System.out.println("Gagné en diagonale gauche");
+
+            Jeu.getInstance().ajouterLog(
+                    String.format(
+                            "Le joueur %s %s a gagné grâce à un placement en diagonale ( gauche )",
+                            Jeu.getInstance().getJoueurActuel().getNom(),
+                            Jeu.getInstance().getJoueurActuel().getPrenom()
+                    )
+            );
+
+            return true;
+        }
+
+        return false;
+    }
+    public boolean getPartieEstGagnante(Case casePlacement){
+
+        System.out.println("Pion place à :" + casePlacement.getPosition().getX() + ", " + casePlacement.getPosition().getY());
+
+        return getVictoireHorizontaleVerticale(casePlacement) || getVictoireDiagonale(casePlacement);
+    }
+
     @Override
     public void mettreAJours() {
 

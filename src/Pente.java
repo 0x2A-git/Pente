@@ -12,11 +12,61 @@ import java.util.*;
 
 public class Pente {
 
-
     public static void main(String[] args){
 
 
         Fenetre fenetrePrincipale = new Fenetre("Test", 800, 600);
+
+        JMenuBar menuBar = new JMenuBar();
+
+        JMenu menu = new JMenu("Jeu");
+
+        // Historique de la partie
+        JMenuItem historique = new JMenuItem("Historique");
+
+
+        historique.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                System.out.println("Historique ouvert");
+                JDialog historiqueFrame = new JDialog(fenetrePrincipale, "Historique", true);
+
+
+                JPanel logsPanel = new JPanel();
+
+                logsPanel.setLayout(new BoxLayout(logsPanel, BoxLayout.Y_AXIS));
+
+                DefaultListModel<String> logs = new DefaultListModel<>();
+
+                logs.addAll(Jeu.getInstance().getLogs());
+
+                JList<String> listeLogs = new JList<String>(logs);
+
+
+                logsPanel.add(new JScrollPane(listeLogs) );
+                logsPanel.add(new JButton("ok"));
+
+                historiqueFrame.add(logsPanel);
+
+
+                historiqueFrame.pack();
+                historiqueFrame.getContentPane().validate();
+                historiqueFrame.getContentPane().repaint();
+                historiqueFrame.setVisible(true);
+            }
+        });
+
+        menu.add(historique);
+
+        // Coup
+
+        JMenuItem annulerCoup = new JMenuItem("Annuler dernier coup");
+
+
+        annulerCoup.setEnabled(false);
+        menu.add(annulerCoup);
+        menuBar.add(menu);
+        fenetrePrincipale.setJMenuBar(menuBar);
 
         Jeu jeu = Jeu.getInstance();
 
@@ -57,6 +107,7 @@ public class Pente {
         Clavier clavier = fenetrePrincipale.getClavier();
         fenetrePrincipale.addKeyListener(clavier);
 
+
         scenePrincipale.getGrille().addOnCaseCliqueeCallback(new Grille.OnCaseCliqueeListener() {
             @Override
             public void onCliquee(Case caseCliquee) {
@@ -68,7 +119,6 @@ public class Pente {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
 
-                System.out.println(fenetrePrincipale.getInsets());
 
                 // Conversion du clique de souris en coordonnées de la grille
                 int xGrid =
@@ -79,7 +129,6 @@ public class Pente {
                         scenePrincipale.getGrille().getHauteur() - mouseEvent.getY() + fenetrePrincipale.getInsets().top,
                         scenePrincipale.getGrille().getHauteurCases());
 
-                System.out.println(xGrid - 1 + ", " + yGrid);
 
                 // Trigger l'event case cliquee
                 scenePrincipale.getGrille().onCaseCliquee(new Vecteur2<>(xGrid - 1, yGrid), mouseEvent);
@@ -176,7 +225,6 @@ public class Pente {
         demarrerBouton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
 
                 parametresPartieFrame.setTitle("Ajouter les joueurs");
                 JPanel creationJoueurPanel = new JPanel();
@@ -389,7 +437,79 @@ public class Pente {
                             @Override
                             public void onPionPlaceListener(Case casePlacement, Pion pion) {
 
+                                annulerCoup.setEnabled(true);
+
+
+                                if(plateau.getPartieEstGagnante(casePlacement)){
+                                    System.out.println("Partie gagnante");
+                                }
+
                                 Jeu.getInstance().getJoueurActuel().ajouterPion(pion);
+                                Jeu.getInstance().setDernierPionPlace(pion);
+
+                                // Enlève callback précédent si existant
+                                if(annulerCoup.getActionListeners().length > 0 )
+                                    annulerCoup.removeActionListener(annulerCoup.getActionListeners()[0]);
+
+                                // Ajoute un callback pour supprimer le pion du plateau
+                                annulerCoup.addActionListener(new ActionListener() {
+                                    @Override
+                                    public void actionPerformed(ActionEvent actionEvent) {
+
+                                        annulerCoup.setEnabled(false);
+
+                                        plateau.getGrille().supprimer(casePlacement.getPosition(), pion);
+                                        fenetrePrincipale.supprimer(pion.getDessins().get(0));
+
+
+                                        joueurActuel.setTexte(String.format("Prochain Joueur : %s %s",
+                                                Jeu.getInstance().getJoueurActuel().getNom(),
+                                                Jeu.getInstance().getJoueurActuel().getPrenom()
+                                                )
+                                        );
+
+                                        // Màj de l'interface
+
+
+
+                                        joueurSuivant.setTexte(String.format("Joueur Actuel : %s %s",
+                                                Jeu.getInstance().getJoueursQueue().peek().getNom(),
+                                                Jeu.getInstance().getJoueursQueue().peek().getPrenom()
+                                                )
+                                        );
+
+                                        Jeu.getInstance().getJoueursQueue().add(Jeu.getInstance().getJoueurActuel());
+
+                                        Jeu.getInstance().setJoueurActuel(Jeu.getInstance().getJoueursQueue().poll());
+
+
+
+                                        pionsJoueurActuel.setTexte(
+                                                String.format("Pions du joueur actuel : %d",
+                                                        Jeu.getInstance().getJoueurActuel().getNbrPions()
+                                                )
+                                        );
+
+                                        nombreCapture.setTexte(
+                                                String.format("Nombre de caputre : %d",
+                                                        Jeu.getInstance().getJoueurActuel().getNbrCapture()
+                                                )
+                                        );
+                                        plateau.dessiner();
+                                        fenetrePrincipale.rafraichir();
+
+                                    }
+                                });
+
+                                Jeu.getInstance().ajouterLog(
+                                        String.format(
+                                                "Le joueur %s %s a placé un pion en %d, %d",
+                                                Jeu.getInstance().getJoueurActuel().getNom(),
+                                                Jeu.getInstance().getJoueurActuel().getPrenom(),
+                                                casePlacement.getPosition().getX(),
+                                                casePlacement.getPosition().getY()
+                                                )
+                                );
 
                                 // Màj de l'interface
 
@@ -417,6 +537,8 @@ public class Pente {
                                             )
                                             );
 
+                                fenetrePrincipale.rafraichir();
+
                             }
                         });
 
@@ -437,27 +559,19 @@ public class Pente {
 
 
                 parametresPartieFrame.pack();
-                parametresPartieFrame.getContentPane().validate();
-                parametresPartieFrame.getContentPane().repaint();
 
             }
         });
 
 
+        fenetrePrincipale.rafraichir();
+        fenetrePrincipale.repaint();
+        fenetrePrincipale.revalidate();
         parametresPartieFrame.getContentPane().add(parametresPartiePanel);
         parametresPartieFrame.pack();
         parametresPartieFrame.setVisible(true);
-        while(!clavier.getEchapTape()) {
-            try {
-                Thread.sleep(200);
-            } catch(Exception ex){
 
-                System.exit(-1);
 
-            }
-            fenetrePrincipale.rafraichir();
-        }
-        fenetrePrincipale.fermer();
 
 
     }
