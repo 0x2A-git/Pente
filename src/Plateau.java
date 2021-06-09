@@ -207,7 +207,9 @@ public class Plateau extends Acteur {
         return dessins;
     }
 
-    public boolean getPartieEstGagnante(Case casePlacement){
+
+    private boolean getVictoireHorizontaleVerticale(Case casePlacement){
+
         int nbAlignementX = 0;
         int nbAlignementY = 0;
 
@@ -283,8 +285,11 @@ public class Plateau extends Acteur {
 
         }
 
-        System.out.println("Pion place à :" + casePlacement.getPosition().getX() + ", " + casePlacement.getPosition().getY());
+        return false;
+    }
 
+
+    private boolean getVictoireDiagonale(Case casePlacement){
         int nbDiagonaleDroite = 0;
         for(int x = -5; x < 5; x++){
 
@@ -345,6 +350,12 @@ public class Plateau extends Acteur {
         }
 
         return false;
+    }
+    public boolean getPartieEstGagnante(Case casePlacement){
+
+        System.out.println("Pion place à :" + casePlacement.getPosition().getX() + ", " + casePlacement.getPosition().getY());
+
+        return getVictoireHorizontaleVerticale(casePlacement) || getVictoireDiagonale(casePlacement);
     }
 
     @Override
