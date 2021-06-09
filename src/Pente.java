@@ -22,6 +22,7 @@ public class Pente {
 
         JMenu menu = new JMenu("Jeu");
 
+        // Historique de la partie
         JMenuItem historique = new JMenuItem("Historique");
 
 
@@ -58,6 +59,13 @@ public class Pente {
 
         menu.add(historique);
 
+        // Coup
+
+        JMenuItem annulerCoup = new JMenuItem("Annuler dernier coup");
+
+
+        annulerCoup.setEnabled(false);
+        menu.add(annulerCoup);
         menuBar.add(menu);
         fenetrePrincipale.setJMenuBar(menuBar);
 
@@ -396,6 +404,8 @@ public class Pente {
                             @Override
                             public void onPionPlaceListener(Case casePlacement, Pion pion) {
 
+                                annulerCoup.setEnabled(true);
+
                                 int nbAlignementX = 0;
                                 int nbAlignementY = 0;
 
@@ -525,6 +535,61 @@ public class Pente {
                                 }
 
                                 Jeu.getInstance().getJoueurActuel().ajouterPion(pion);
+                                Jeu.getInstance().setDernierPionPlace(pion);
+
+                                // Enlève callback précédent si existant
+                                if(annulerCoup.getActionListeners().length > 0 )
+                                    annulerCoup.removeActionListener(annulerCoup.getActionListeners()[0]);
+
+                                // Ajoute un callback pour supprimer le pion du plateau
+                                annulerCoup.addActionListener(new ActionListener() {
+                                    @Override
+                                    public void actionPerformed(ActionEvent actionEvent) {
+
+                                        annulerCoup.setEnabled(false);
+
+                                        plateau.getGrille().supprimer(casePlacement.getPosition(), pion);
+                                        fenetrePrincipale.supprimer(pion.getDessins().get(0));
+
+
+                                        joueurActuel.setTexte(String.format("Prochain Joueur : %s %s",
+                                                Jeu.getInstance().getJoueurActuel().getNom(),
+                                                Jeu.getInstance().getJoueurActuel().getPrenom()
+                                                )
+                                        );
+
+                                        // Màj de l'interface
+
+
+
+                                        joueurSuivant.setTexte(String.format("Joueur Actuel : %s %s",
+                                                Jeu.getInstance().getJoueursQueue().peek().getNom(),
+                                                Jeu.getInstance().getJoueursQueue().peek().getPrenom()
+                                                )
+                                        );
+
+                                        Jeu.getInstance().getJoueursQueue().add(Jeu.getInstance().getJoueurActuel());
+
+                                        Jeu.getInstance().setJoueurActuel(Jeu.getInstance().getJoueursQueue().poll());
+
+
+
+                                        pionsJoueurActuel.setTexte(
+                                                String.format("Pions du joueur actuel : %d",
+                                                        Jeu.getInstance().getJoueurActuel().getNbrPions()
+                                                )
+                                        );
+
+                                        nombreCapture.setTexte(
+                                                String.format("Nombre de caputre : %d",
+                                                        Jeu.getInstance().getJoueurActuel().getNbrCapture()
+                                                )
+                                        );
+                                        plateau.dessiner();
+                                        fenetrePrincipale.rafraichir();
+
+                                    }
+                                });
 
                                 Jeu.getInstance().ajouterLog(
                                         String.format(

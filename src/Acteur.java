@@ -41,6 +41,9 @@ public abstract class Acteur {
     public abstract ArrayList<Dessin> dessiner();
     public abstract void mettreAJours();
 
+    public ArrayList<Dessin> getDessins(){
+        return this.dessins;
+    }
     // Events
 
     /**

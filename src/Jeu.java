@@ -36,6 +36,15 @@ public class Jeu {
         return this.fenetre;
     }
 
+    public Pion dernierPionPlace = null;
+
+    public Pion getDernierPionPlace() {
+        return dernierPionPlace;
+    }
+
+    public void setDernierPionPlace(Pion pion){
+        this.dernierPionPlace = pion;
+    }
 
     /**
      * Implémentation reprise de wikipedia car thread safe
