@@ -362,11 +362,11 @@ public class Plateau extends Acteur {
 
         return false;
     }
-    public boolean getPartieEstGagnante(Case casePlacement){
+    public boolean getPartieEstGagnante(Case casePlacement, Joueur joueur){
 
         System.out.println("Pion place à :" + casePlacement.getPosition().getX() + ", " + casePlacement.getPosition().getY());
 
-        return getVictoireHorizontaleVerticale(casePlacement) || getVictoireDiagonale(casePlacement);
+        return getVictoireHorizontaleVerticale(casePlacement) || getVictoireDiagonale(casePlacement) || joueur.getNbrCapture() == 5;
     }
 
     @Override

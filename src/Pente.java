@@ -589,7 +589,7 @@ public class Pente {
                                 }
 
 
-                                if(plateau.getPartieEstGagnante(casePlacement)){
+                                if(plateau.getPartieEstGagnante(casePlacement, Jeu.getInstance().getJoueurActuel())){
                                     System.out.println("Partie gagnante");
                                 }
 
