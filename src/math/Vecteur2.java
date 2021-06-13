@@ -1,5 +1,7 @@
 package math;
 
+import java.util.Objects;
+
 /**
  * Implémentation générique du vecteur 2D
  * */
@@ -51,4 +53,14 @@ public class Vecteur2<T extends Number> {
     public double getDistance(){
         return Math.sqrt( Math.pow(this.x.longValue(), 2) + Math.pow(this.y.longValue(), 2) );
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Vecteur2<?> vecteur2 = (Vecteur2<?>) o;
+        return Objects.equals(x, vecteur2.x) && Objects.equals(y, vecteur2.y);
+    }
+
+
 }

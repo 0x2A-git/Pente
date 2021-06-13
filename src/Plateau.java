@@ -76,6 +76,10 @@ public class Plateau extends Acteur {
                 pion
         );
 
+        pion.ajouterComposant(PosableComposant.class);
+
+        pion.getComposant(PosableComposant.class).setPosition(caseActuelle.getPosition());
+
         Jeu.getInstance().dessiner(pion.dessiner());
 
         this.onPionPlaceListeners.forEach(c -> c.onPionPlaceListener(caseActuelle, pion));
@@ -213,6 +217,9 @@ public class Plateau extends Acteur {
         int nbAlignementX = 0;
         int nbAlignementY = 0;
 
+        ArrayList<Acteur> pionsACapturer = new ArrayList<>();
+
+        boolean possibleCapture = false;
 
         /**
          * Regarde 5 voisins en horizontal, en vertical et en diagonal
@@ -229,15 +236,19 @@ public class Plateau extends Acteur {
 
                 // Check en vertical
                 Case caseScannee = this.getGrille().getCase(x, y);
-
-
+                
                 if (caseScannee.getObjets().size() < 1)
                     continue;
 
+
                 if (caseScannee.getObjets().get(0).getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur())
                     nbAlignementY += 1;
-                else
+                else {
                     nbAlignementY = 0;
+                    pionsACapturer.add(caseScannee.getObjets().get(0) );
+                }
+
+
             }
 
             if(nbAlignementY == 5) {

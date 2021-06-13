@@ -1,9 +1,8 @@
 import MG2D.Fenetre;
 import MG2D.geometrie.Dessin;
+import math.Vecteur2;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Queue;
+import java.util.*;
 
 /**
  * Singleton qui représente l'état du jeu
@@ -36,7 +35,8 @@ public class Jeu {
         return this.fenetre;
     }
 
-    public Pion dernierPionPlace = null;
+
+    private Pion dernierPionPlace = null;
 
     public Pion getDernierPionPlace() {
         return dernierPionPlace;
@@ -44,6 +44,16 @@ public class Jeu {
 
     public void setDernierPionPlace(Pion pion){
         this.dernierPionPlace = pion;
+    }
+
+    private Map<Acteur, Vecteur2<Integer>> derniersPionsSupprimes = new HashMap<>();
+
+    public void ajouterDerniersPionSupprimes(Acteur p, Vecteur2<Integer> positionPion){
+        this.derniersPionsSupprimes.put(p, positionPion);
+    }
+
+    public Map<Acteur, Vecteur2<Integer>> getDerniersPionsSupprimes(){
+        return this.derniersPionsSupprimes;
     }
 
     /**

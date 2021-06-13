@@ -437,7 +437,156 @@ public class Pente {
                             @Override
                             public void onPionPlaceListener(Case casePlacement, Pion pion) {
 
+
+                                Jeu.getInstance().getDerniersPionsSupprimes().clear();
                                 annulerCoup.setEnabled(true);
+
+
+
+                                Acteur sequence = null;
+
+                                LinkedList<Acteur> candidats = new LinkedList<>();
+
+                                boolean capture = true;
+
+                                // Capture horizontale
+
+
+                                for (int x = Math.max(casePlacement.getPosition().getX() - 3, 0); x < casePlacement.getPosition().getX() + 4; x++){
+
+
+                                    if( x == casePlacement.getPosition().getX() || x ==  casePlacement.getPosition().getX() + 3){
+
+                                        // Contient le premier pion ajouté
+                                        Acteur debut = candidats.pollFirst();
+
+                                        // Si premier pion n'est pas null et est de la même couleur que le joueur actuel
+                                        if(debut != null && debut.getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur() ){
+
+                                            ArrayList<Acteur> aEnlever = new ArrayList<>();
+
+                                            // On dequeue mes candidats et on vérifie qu'ils ne sont pas de la même couleur que le joueur actuel
+                                            while(!candidats.isEmpty()){
+                                                Acteur act = candidats.poll();
+                                                if(act.getComposant(ColorableComposant.class).getCouleur() != Jeu.getInstance().getJoueurActuel().getCouleur())
+                                                    aEnlever.add(act);
+                                            }
+
+
+                                            // Enfin on supprime les pions si capture valide en Y
+                                            if(aEnlever.size() == 2) {
+                                                Jeu.getInstance().getJoueurActuel().setNbrCapture(Jeu.getInstance().getJoueurActuel().getNbrCapture() + 1);
+                                                int finalX = x;
+                                                aEnlever.forEach(p -> {
+                                                    Jeu.getInstance().getDerniersPionsSupprimes().put(p, p.getComposant(PosableComposant.class).getPosition());
+
+                                                    Jeu.getInstance().getJoueursQueue().peek().getPions().remove(p);
+
+                                                    plateau.getGrille().supprimer(
+                                                            p.getComposant(PosableComposant.class).getPosition(),
+                                                            p
+                                                    );
+                                                    fenetrePrincipale.supprimer(p.getDessins().get(0));
+
+                                                });
+                                            }
+
+                                        }
+
+                                        candidats = new LinkedList<>();
+                                        candidats.add(pion);
+                                        continue;
+                                    }
+
+                                    try {
+                                        candidats.add(plateau.getGrille().getCase(x, casePlacement.getPosition().getY()).getObjets().get(0));
+                                    } catch(IndexOutOfBoundsException ex){
+                                        // Si rien dans la case
+
+                                        if(x < casePlacement.getPosition().getX())
+                                            x = casePlacement.getPosition().getX() - 1;
+                                        else
+                                            x = casePlacement.getPosition().getX() + 3;
+                                    }
+
+
+                                }
+
+                                // Capture verticale
+
+
+                                for (int y = Math.max(casePlacement.getPosition().getY() - 3,0); y < casePlacement.getPosition().getY() + 4; y++){
+
+
+                                    if( y == casePlacement.getPosition().getY() || y ==  casePlacement.getPosition().getY() + 3){
+
+                                        // Contient le premier pion ajouté
+                                        Acteur debut = candidats.pollFirst();
+
+                                        // Si premier pion n'est pas null et est de la même couleur que le joueur actuel
+                                        if(debut != null && debut.getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur() ){
+
+                                            ArrayList<Acteur> aEnlever = new ArrayList<>();
+
+                                            // On dequeue mes candidats et on vérifie qu'ils ne sont pas de la même couleur que le joueur actuel
+                                            while(!candidats.isEmpty()){
+                                                Acteur act = candidats.poll();
+                                                if(act.getComposant(ColorableComposant.class).getCouleur() != Jeu.getInstance().getJoueurActuel().getCouleur())
+                                                    aEnlever.add(act);
+                                            }
+
+
+                                            // Enfin on supprime les pions si capture valide en Y
+                                            if(aEnlever.size() == 2) {
+                                                Jeu.getInstance().getJoueurActuel().setNbrCapture(Jeu.getInstance().getJoueurActuel().getNbrCapture() + 1);
+
+                                                // final y pas bon stocker position pion dans linkedlist
+                                                /*
+                                                int finalY = y;
+
+                                                for(int i = ; i < aEnlever.size(); i++){
+                                                    Jeu.getInstance().getDerniersPionsSupprimes().put(aEnlever.get(i), new Vecteur2<>(casePlacement.getPosition().getX(), y + i));
+
+                                                    Jeu.getInstance().getJoueursQueue().peek().getPions().remove(aEnlever.get(i));
+                                                    plateau.getGrille().supprimer(new Vecteur2<>(casePlacement.getPosition().getX(), y + i), aEnlever.get(i));
+
+                                                    fenetrePrincipale.supprimer(aEnlever.get(i).getDessins().get(0));
+                                                }*/
+
+                                                aEnlever.forEach(p -> {
+                                                    Jeu.getInstance().getDerniersPionsSupprimes().put(p, p.getComposant(PosableComposant.class).getPosition());
+
+                                                    Jeu.getInstance().getJoueursQueue().peek().getPions().remove(p);
+
+                                                    plateau.getGrille().supprimer(
+                                                            p.getComposant(PosableComposant.class).getPosition(),
+                                                            p
+                                                    );
+                                                    fenetrePrincipale.supprimer(p.getDessins().get(0));
+
+                                                });
+                                            }
+
+                                        }
+
+                                        candidats = new LinkedList<>();
+                                        candidats.add(pion);
+                                        continue;
+                                    }
+
+                                    try {
+                                        candidats.add(plateau.getGrille().getCase(casePlacement.getPosition().getX(), y).getObjets().get(0));
+                                    } catch(IndexOutOfBoundsException ex){
+                                        // Si rien dans la case
+
+                                        if(y < casePlacement.getPosition().getY())
+                                            y = casePlacement.getPosition().getY() - 1;
+                                        else
+                                            y = casePlacement.getPosition().getY() + 3;
+                                    }
+
+
+                                }
 
 
                                 if(plateau.getPartieEstGagnante(casePlacement)){
@@ -458,8 +607,31 @@ public class Pente {
 
                                         annulerCoup.setEnabled(false);
 
-                                        plateau.getGrille().supprimer(casePlacement.getPosition(), pion);
+                                        //plateau.getGrille().supprimer(casePlacement.getPosition(), pion);
+
+                                        // Pion joué à supprimer
+                                        plateau.getGrille().supprimer(casePlacement.getPosition(), Jeu.getInstance().getDernierPionPlace());
+
+                                        Jeu.getInstance().getJoueursQueue().peek().getPions().remove(pion);
+
                                         fenetrePrincipale.supprimer(pion.getDessins().get(0));
+                                        // Pions à rajouter avant la capture
+                                        if(Jeu.getInstance().getDerniersPionsSupprimes().size() > 0) {
+                                            Jeu.getInstance().getJoueursQueue().peek().setNbrCapture(
+                                                    Jeu.getInstance().getJoueursQueue().peek().getNbrCapture() -
+                                                            (int) (Jeu.getInstance().getDerniersPionsSupprimes().keySet().size() / 2));
+
+
+                                            Jeu.getInstance().getDerniersPionsSupprimes().keySet().forEach(p -> Jeu.getInstance().getJoueurActuel().ajouterPion(p));
+                                        }
+                                        Jeu.getInstance().getDerniersPionsSupprimes().keySet().forEach(p -> {
+                                            plateau.getGrille().ajouter(Jeu.getInstance().getDerniersPionsSupprimes().get(p), p);
+                                            fenetrePrincipale.ajouter(p.getDessins().get(0));
+                                        });
+
+
+
+                                        //fenetrePrincipale.supprimer(pion.getDessins().get(0));
 
 
                                         joueurActuel.setTexte(String.format("Prochain Joueur : %s %s",
@@ -491,7 +663,7 @@ public class Pente {
                                         );
 
                                         nombreCapture.setTexte(
-                                                String.format("Nombre de caputre : %d",
+                                                String.format("Nombre de captures : %d",
                                                         Jeu.getInstance().getJoueurActuel().getNbrCapture()
                                                 )
                                         );
@@ -532,7 +704,7 @@ public class Pente {
                                                 );
 
                                 nombreCapture.setTexte(
-                                    String.format("Nombre de caputre : %d",
+                                    String.format("Nombre de captures : %d",
                                             Jeu.getInstance().getJoueurActuel().getNbrCapture()
                                             )
                                             );

@@ -13,7 +13,7 @@ public class Joueur{
     private int nbrCapture = 0 ;
 
     // Garde les adresses mémoires des pions placés par ce joueur
-    private ArrayList<Pion> pions;
+    private ArrayList<Acteur> pions;
 
     // Ensemble des constructeurs
 
@@ -34,11 +34,12 @@ public class Joueur{
         this.couleur = couleur;
     }
 
+
     /**
      * Ajouter Pion
      * @param pion - référence forte vers le pion ajouté sur le plateau ou capturé
      */
-    public void ajouterPion(Pion pion) {
+    public void ajouterPion(Acteur pion) {
         this.pions.add(pion);
     }
 
@@ -46,7 +47,7 @@ public class Joueur{
      * Getter Pions
      * @return - Retourne un tableau de référence des pions du joueur
      */
-    public ArrayList<Pion> getPions(){
+    public ArrayList<Acteur> getPions(){
         return this.pions;
     }
 
