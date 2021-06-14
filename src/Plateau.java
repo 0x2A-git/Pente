@@ -1,4 +1,5 @@
 import MG2D.Couleur;
+import MG2D.Fenetre;
 import MG2D.geometrie.Dessin;
 import MG2D.geometrie.Ligne;
 import MG2D.geometrie.Point;
@@ -6,6 +7,7 @@ import math.Vecteur2;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Plateau extends Acteur {
 
@@ -299,6 +301,149 @@ public class Plateau extends Acteur {
         return false;
     }
 
+    public void capturer(Case casePlacement, Pion pion, Fenetre fenetrePrincipale){
+
+        LinkedList<Acteur> candidats = new LinkedList<>();
+
+        // Capture horizontale
+
+
+        for (int x = Math.max(casePlacement.getPosition().getX() - 3, 0); x < casePlacement.getPosition().getX() + 4; x++){
+
+
+            if( x == casePlacement.getPosition().getX() || x ==  casePlacement.getPosition().getX() + 3){
+
+                // Contient le premier pion ajouté
+                Acteur debut = candidats.pollFirst();
+
+                // Si premier pion n'est pas null et est de la même couleur que le joueur actuel
+                if(debut != null && debut.getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur() ){
+
+                    ArrayList<Acteur> aEnlever = new ArrayList<>();
+
+                    // On dequeue mes candidats et on vérifie qu'ils ne sont pas de la même couleur que le joueur actuel
+                    while(!candidats.isEmpty()){
+                        Acteur act = candidats.poll();
+                        if(act.getComposant(ColorableComposant.class).getCouleur() != Jeu.getInstance().getJoueurActuel().getCouleur())
+                            aEnlever.add(act);
+                    }
+
+
+                    // Enfin on supprime les pions si capture valide en Y
+                    if(aEnlever.size() == 2) {
+                        Jeu.getInstance().getJoueurActuel().setNbrCapture(Jeu.getInstance().getJoueurActuel().getNbrCapture() + 1);
+                        int finalX = x;
+                        aEnlever.forEach(p -> {
+                            Jeu.getInstance().getDerniersPionsSupprimes().put(p, p.getComposant(PosableComposant.class).getPosition());
+
+                            Jeu.getInstance().getJoueursQueue().peek().getPions().remove(p);
+
+                            this.getGrille().supprimer(
+                                    p.getComposant(PosableComposant.class).getPosition(),
+                                    p
+                            );
+                            fenetrePrincipale.supprimer(p.getDessins().get(0));
+
+                        });
+                    }
+
+                }
+
+                candidats = new LinkedList<>();
+                candidats.add(pion);
+                continue;
+            }
+
+            try {
+                candidats.add(this.getGrille().getCase(x, casePlacement.getPosition().getY()).getObjets().get(0));
+            } catch(IndexOutOfBoundsException ex){
+                // Si rien dans la case
+
+                if(x < casePlacement.getPosition().getX())
+                    x = casePlacement.getPosition().getX() - 1;
+                else
+                    x = casePlacement.getPosition().getX() + 3;
+            }
+
+
+        }
+
+        // Capture verticale
+
+
+        for (int y = Math.max(casePlacement.getPosition().getY() - 3,0); y < casePlacement.getPosition().getY() + 4; y++){
+
+
+            if( y == casePlacement.getPosition().getY() || y ==  casePlacement.getPosition().getY() + 3){
+
+                // Contient le premier pion ajouté
+                Acteur debut = candidats.pollFirst();
+
+                // Si premier pion n'est pas null et est de la même couleur que le joueur actuel
+                if(debut != null && debut.getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur() ){
+
+                    ArrayList<Acteur> aEnlever = new ArrayList<>();
+
+                    // On dequeue mes candidats et on vérifie qu'ils ne sont pas de la même couleur que le joueur actuel
+                    while(!candidats.isEmpty()){
+                        Acteur act = candidats.poll();
+                        if(act.getComposant(ColorableComposant.class).getCouleur() != Jeu.getInstance().getJoueurActuel().getCouleur())
+                            aEnlever.add(act);
+                    }
+
+
+                    // Enfin on supprime les pions si capture valide en Y
+                    if(aEnlever.size() == 2) {
+                        Jeu.getInstance().getJoueurActuel().setNbrCapture(Jeu.getInstance().getJoueurActuel().getNbrCapture() + 1);
+
+                        // final y pas bon stocker position pion dans linkedlist
+                                                /*
+                                                int finalY = y;
+
+                                                for(int i = ; i < aEnlever.size(); i++){
+                                                    Jeu.getInstance().getDerniersPionsSupprimes().put(aEnlever.get(i), new Vecteur2<>(casePlacement.getPosition().getX(), y + i));
+
+                                                    Jeu.getInstance().getJoueursQueue().peek().getPions().remove(aEnlever.get(i));
+                                                    plateau.getGrille().supprimer(new Vecteur2<>(casePlacement.getPosition().getX(), y + i), aEnlever.get(i));
+
+                                                    fenetrePrincipale.supprimer(aEnlever.get(i).getDessins().get(0));
+                                                }*/
+
+                        aEnlever.forEach(p -> {
+                            Jeu.getInstance().getDerniersPionsSupprimes().put(p, p.getComposant(PosableComposant.class).getPosition());
+
+                            Jeu.getInstance().getJoueursQueue().peek().getPions().remove(p);
+
+                            this.getGrille().supprimer(
+                                    p.getComposant(PosableComposant.class).getPosition(),
+                                    p
+                            );
+                            fenetrePrincipale.supprimer(p.getDessins().get(0));
+
+                        });
+                    }
+
+                }
+
+                candidats = new LinkedList<>();
+                candidats.add(pion);
+                continue;
+            }
+
+            try {
+                candidats.add(this.getGrille().getCase(casePlacement.getPosition().getX(), y).getObjets().get(0));
+            } catch(IndexOutOfBoundsException ex){
+                // Si rien dans la case
+
+                if(y < casePlacement.getPosition().getY())
+                    y = casePlacement.getPosition().getY() - 1;
+                else
+                    y = casePlacement.getPosition().getY() + 3;
+            }
+
+
+        }
+    }
 
     private boolean getVictoireDiagonale(Case casePlacement){
         int nbDiagonaleDroite = 0;
