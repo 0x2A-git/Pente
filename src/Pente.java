@@ -399,11 +399,6 @@ public class Pente {
 
                 scenePrincipale.ajouter(new Vecteur2<>(1, 0), joueursZoneTexte, Scene.Placement.MILIEU);
 
-
-
-
-                
-
                 validerBtn.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent actionEvent) {
@@ -447,15 +442,16 @@ public class Pente {
                             @Override
                             public void onPionPlaceListener(Case casePlacement, Pion pion) {
 
-
                                 Jeu.getInstance().getDerniersPionsSupprimes().clear();
                                 annulerCoup.setEnabled(true);
+
+                                plateau.capturer(casePlacement);
 
                                 plateau.capturer(casePlacement, pion, fenetrePrincipale);
 
 
 
-                                if(plateau.getPartieEstGagnante(casePlacement, Jeu.getInstance().getJoueurActuel())){
+                                if(plateau.getPartieEstGagnante(casePlacement)){
                                     System.out.println("Partie gagnante");
                                 }
 

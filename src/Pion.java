@@ -52,7 +52,7 @@ public  class Pion extends Acteur {
 
     @Override
     public ArrayList<Dessin> dessiner() {
-        System.out.println("Pion :" + position.getX() + ", " + position.getY());
+        //System.out.println("Pion :" + position.getX() + ", " + position.getY());
         Cercle cercle = new Cercle(
                 getComposant(ColorableComposant.class).getCouleur(),
                 new Point(getPosition().getX(),getPosition().getY()),
