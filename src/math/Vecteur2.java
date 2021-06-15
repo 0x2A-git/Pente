@@ -62,5 +62,8 @@ public class Vecteur2<T extends Number> {
         return Objects.equals(x, vecteur2.x) && Objects.equals(y, vecteur2.y);
     }
 
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
+    }
 }

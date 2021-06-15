@@ -445,11 +445,13 @@ public class Pente {
                                 Jeu.getInstance().getDerniersPionsSupprimes().clear();
                                 annulerCoup.setEnabled(true);
 
-                                plateau.capturer(casePlacement);
+                                plateau.detecterCaptureDiagonaleGauche(casePlacement);
 
-                                plateau.capturer(casePlacement, pion, fenetrePrincipale);
+                                plateau.detecterCaptureDiagonaleDroite(casePlacement);
 
+                                plateau.detecterCaptureHorizontale(casePlacement, pion);
 
+                                plateau.detecterCaptureVerticale(casePlacement, pion);
 
                                 if(plateau.getPartieEstGagnante(casePlacement)){
                                     System.out.println("Partie gagnante");
