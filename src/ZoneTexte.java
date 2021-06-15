@@ -65,10 +65,6 @@ public class ZoneTexte extends Acteur {
         textes.add(texte);
     }
 
-    @Override
-    public void mettreAJours() {
-
-    }
 
     @Override
     public void onPreAjout(Case caseActuelle) {
@@ -101,21 +97,6 @@ public class ZoneTexte extends Acteur {
 
 
         }
-    }
-
-    @Override
-    public void onMisAJour() {
-
-    }
-
-    @Override
-    public void onSupprime() {
-
-    }
-
-    @Override
-    public void onDessine() {
-
     }
 
     @Override

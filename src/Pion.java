@@ -64,10 +64,7 @@ public  class Pion extends Acteur {
         return dessins;
     }
 
-    @Override
-    public void mettreAJours() {
 
-    }
 
     @Override
     public void onPreAjout(Case caseActuelle) {
@@ -81,18 +78,4 @@ public  class Pion extends Acteur {
 
     }
 
-    @Override
-    public void onMisAJour() {
-
-    }
-
-    @Override
-    public void onSupprime() {
-
-    }
-
-    @Override
-    public void onDessine() {
-
-    }
 }

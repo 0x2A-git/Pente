@@ -472,64 +472,81 @@ public class Plateau extends Acteur {
         LinkedList<Acteur> candidats = new LinkedList<>();
 
         // Capture verticale
+        for(int i = -3; i < 4; i++){
 
-        for (int y = Math.max(casePlacement.getPosition().getY() - 3,0); y < casePlacement.getPosition().getY() + 4; y++){
+            // Check Out of Bounds bords à gauche
+            if(casePlacement.getPosition().getX() < 0 ||
+                    casePlacement.getPosition().getY() + i < 0)
+                continue;
+
+            // Check Out of Bounds bords à droite
+            if(casePlacement.getPosition().getX() > this.getGrille().getMatrice().get(0).size() - 1 ||
+                    casePlacement.getPosition().getY() + i > this.getGrille().getMatrice().get(0).size() - 1)
+                continue;
 
 
-            if( y == casePlacement.getPosition().getY() || y ==  casePlacement.getPosition().getY() + 3){
+            Case diagonaleGauche = this.getGrille().getCase(
+                    casePlacement.getPosition().getX(),
+                    casePlacement.getPosition().getY() + i
+            );
 
-                // Contient le premier pion ajouté
-                Acteur debut = candidats.pollFirst();
+            //System.out.println(diagonaleGauche.getPosition().getX() + ", " + diagonaleGauche.getPosition().getY());
 
-                // Si premier pion n'est pas null et est de la même couleur que le joueur actuel
-                if(debut != null && debut.getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur() ){
+            try{
 
-                    ArrayList<Acteur> aEnlever = new ArrayList<>();
+                candidats.add(diagonaleGauche.getObjets().get(0));
 
-                    // On dequeue mes candidats et on vérifie qu'ils ne sont pas de la même couleur que le joueur actuel
-                    while(!candidats.isEmpty()){
-                        Acteur act = candidats.poll();
-                        if(act.getComposant(ColorableComposant.class).getCouleur() != Jeu.getInstance().getJoueurActuel().getCouleur())
-                            aEnlever.add(act);
+
+                //System.out.println(i);
+
+                // Si on arrive à la case cliquée ou à la dernière case de la diagonale gauche...
+                if(diagonaleGauche.getPosition().equals(casePlacement.getPosition()) || i == 3) {
+
+                    //System.out.println(candidats);
+
+                    Acteur debut = i == 3 ? candidats.pollLast() : candidats.pollFirst();
+
+                    if(debut != null && debut.getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur()){
+                        //System.out.println("ok");
+
+                        ArrayList<Acteur> aEnlever = new ArrayList<>();
+
+                        // On dequeue mes candidats et on vérifie qu'ils ne sont pas de la même couleur que le joueur actuel
+                        while(!candidats.isEmpty()){
+                            Acteur act = candidats.poll();
+
+                            if (act == null) break;
+
+                            if(act.getComposant(ColorableComposant.class).getCouleur() != Jeu.getInstance().getJoueurActuel().getCouleur())
+                                aEnlever.add(act);
+                        }
+
+                        // Enfin on supprime les pions si capture valide en Y
+                        if(aEnlever.size() == 2) {
+                            Jeu.getInstance().getJoueurActuel().setNbrCapture(Jeu.getInstance().getJoueurActuel().getNbrCapture() + 1);
+                            aEnlever.forEach(p -> {
+                                Jeu.getInstance().getDerniersPionsSupprimes().put(p, p.getComposant(PosableComposant.class).getPosition());
+
+                                Jeu.getInstance().getJoueursQueue().peek().getPions().remove(p);
+
+                                this.getGrille().supprimer(
+                                        p.getComposant(PosableComposant.class).getPosition(),
+                                        p
+                                );
+                                Jeu.getInstance().getFenetre().supprimer(p.getDessins().get(0));
+
+                            });
+                        }
+
                     }
 
-
-                    // Enfin on supprime les pions si capture valide en Y
-                    if(aEnlever.size() == 2) {
-                        Jeu.getInstance().getJoueurActuel().setNbrCapture(Jeu.getInstance().getJoueurActuel().getNbrCapture() + 1);
-
-                        aEnlever.forEach(p -> {
-                            Jeu.getInstance().getDerniersPionsSupprimes().put(p, p.getComposant(PosableComposant.class).getPosition());
-
-                            Jeu.getInstance().getJoueursQueue().peek().getPions().remove(p);
-
-                            this.getGrille().supprimer(
-                                    p.getComposant(PosableComposant.class).getPosition(),
-                                    p
-                            );
-                            Jeu.getInstance().getFenetre().supprimer(p.getDessins().get(0));
-
-                        });
-                    }
-
+                    candidats = new LinkedList<>();
                 }
 
-                candidats = new LinkedList<>();
-                candidats.add(pion);
-                continue;
-            }
-
-            try {
-                candidats.add(this.getGrille().getCase(casePlacement.getPosition().getX(), y).getObjets().get(0));
             } catch(IndexOutOfBoundsException ex){
-                // Si rien dans la case
 
-                if(y < casePlacement.getPosition().getY())
-                    y = casePlacement.getPosition().getY() - 1;
-                else
-                    y = casePlacement.getPosition().getY() + 3;
+                candidats.add(null);
             }
-
 
         }
     }
@@ -538,67 +555,82 @@ public class Plateau extends Acteur {
 
         LinkedList<Acteur> candidats = new LinkedList<>();
 
-        // Capture horizontale
+        // Capture verticale
+        for(int i = -3; i < 4; i++){
+
+            // Check Out of Bounds bords à gauche
+            if(casePlacement.getPosition().getX() + i < 0 ||
+                    casePlacement.getPosition().getY() < 0)
+                continue;
+
+            // Check Out of Bounds bords à droite
+            if(casePlacement.getPosition().getX() + i > this.getGrille().getMatrice().get(0).size() - 1 ||
+                    casePlacement.getPosition().getY() > this.getGrille().getMatrice().get(0).size() - 1)
+                continue;
 
 
-        for (int x = Math.max(casePlacement.getPosition().getX() - 3, 0); x < casePlacement.getPosition().getX() + 4; x++){
+            Case diagonaleGauche = this.getGrille().getCase(
+                    casePlacement.getPosition().getX() + i,
+                    casePlacement.getPosition().getY()
+            );
+
+            //System.out.println(diagonaleGauche.getPosition().getX() + ", " + diagonaleGauche.getPosition().getY());
+
+            try{
+
+                candidats.add(diagonaleGauche.getObjets().get(0));
 
 
-            // Si x est la case placement ou une case en bout de ligne alors capturer
-            if( x == casePlacement.getPosition().getX() || x ==  casePlacement.getPosition().getX() + 3){
+                //System.out.println(i);
 
-                // Contient le premier pion ajouté
-                Acteur debut = candidats.pollFirst();
+                // Si on arrive à la case cliquée ou à la dernière case de la diagonale gauche...
+                if(diagonaleGauche.getPosition().equals(casePlacement.getPosition()) || i == 3) {
 
-                // Si premier pion n'est pas null et est de la même couleur que le joueur actuel
-                if(debut != null && debut.getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur() ){
+                    //System.out.println(candidats);
 
-                    ArrayList<Acteur> aEnlever = new ArrayList<>();
+                    Acteur debut = i == 3 ? candidats.pollLast() : candidats.pollFirst();
 
-                    // On dequeue mes candidats et on vérifie qu'ils ne sont pas de la même couleur que le joueur actuel
-                    while(!candidats.isEmpty()){
-                        Acteur act = candidats.poll();
-                        if(act.getComposant(ColorableComposant.class).getCouleur() != Jeu.getInstance().getJoueurActuel().getCouleur())
-                            aEnlever.add(act);
+                    if(debut != null && debut.getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur()){
+                        //System.out.println("ok");
+
+                        ArrayList<Acteur> aEnlever = new ArrayList<>();
+
+                        // On dequeue mes candidats et on vérifie qu'ils ne sont pas de la même couleur que le joueur actuel
+                        while(!candidats.isEmpty()){
+                            Acteur act = candidats.poll();
+
+                            if (act == null) break;
+
+                            if(act.getComposant(ColorableComposant.class).getCouleur() != Jeu.getInstance().getJoueurActuel().getCouleur())
+                                aEnlever.add(act);
+                        }
+
+                        // Enfin on supprime les pions si capture valide en Y
+                        if(aEnlever.size() == 2) {
+                            Jeu.getInstance().getJoueurActuel().setNbrCapture(Jeu.getInstance().getJoueurActuel().getNbrCapture() + 1);
+                            aEnlever.forEach(p -> {
+                                Jeu.getInstance().getDerniersPionsSupprimes().put(p, p.getComposant(PosableComposant.class).getPosition());
+
+                                Jeu.getInstance().getJoueursQueue().peek().getPions().remove(p);
+
+                                this.getGrille().supprimer(
+                                        p.getComposant(PosableComposant.class).getPosition(),
+                                        p
+                                );
+                                Jeu.getInstance().getFenetre().supprimer(p.getDessins().get(0));
+
+                            });
+                        }
+
                     }
 
-
-                    // Enfin on supprime les pions si capture valide en Y
-                    if(aEnlever.size() == 2) {
-                        Jeu.getInstance().getJoueurActuel().setNbrCapture(Jeu.getInstance().getJoueurActuel().getNbrCapture() + 1);
-                        int finalX = x;
-                        aEnlever.forEach(p -> {
-                            Jeu.getInstance().getDerniersPionsSupprimes().put(p, p.getComposant(PosableComposant.class).getPosition());
-
-                            Jeu.getInstance().getJoueursQueue().peek().getPions().remove(p);
-
-                            this.getGrille().supprimer(
-                                    p.getComposant(PosableComposant.class).getPosition(),
-                                    p
-                            );
-                            Jeu.getInstance().getFenetre().supprimer(p.getDessins().get(0));
-
-                        });
-                    }
-
+                    candidats = new LinkedList<>();
                 }
 
-                candidats = new LinkedList<>();
-                candidats.add(pion);
-                continue;
-            }
-
-            try {
-                candidats.add(this.getGrille().getCase(x, casePlacement.getPosition().getY()).getObjets().get(0));
             } catch(IndexOutOfBoundsException ex){
-                // Si rien dans la case
 
-                if(x < casePlacement.getPosition().getX())
-                    x = casePlacement.getPosition().getX() - 1;
-                else
-                    x = casePlacement.getPosition().getX() + 3;
+                candidats.add(null);
             }
-
 
         }
     }
@@ -671,29 +703,11 @@ public class Plateau extends Acteur {
     }
 
     @Override
-    public void mettreAJours() {
-
-    }
-
-    @Override
     public void onPreAjout(Case caseActuelle) {
 
     }
 
-    @Override
-    public void onMisAJour() {
 
-    }
-
-    @Override
-    public void onSupprime() {
-
-    }
-
-    @Override
-    public void onDessine() {
-
-    }
 
     public void ajouterOnPionPlaceListerner(OnPionPlaceListener listener){
         this.onPionPlaceListeners.add(listener);

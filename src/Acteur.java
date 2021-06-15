@@ -7,6 +7,14 @@ import java.util.HashMap;
 
 /**
  * Représente un objet quelconque dans une scène
+ * Auteurs :
+ *
+ * BERNARD Manon
+ * BOURRE Maxime
+ * BUTELLE Dorine
+ * VASSEUR Maxence
+ * DELSART Eloise
+ * MARTIN Lucas
  * */
 public abstract class Acteur {
 
@@ -20,27 +28,50 @@ public abstract class Acteur {
 
     ArrayList<Dessin> dessins = new ArrayList<>();
 
+    /**
+     * Constructeur par défaut
+     */
     public Acteur() {
         this.position = new Vecteur2<>(-1,-1);
     }
 
+    /**
+     * Constructeur
+     * @param position - Position dans la fenêtre
+     */
     public Acteur(Vecteur2<Integer> position){
         this.position = position;
 
     }
 
+    /**
+     * Changer la position de l'acteur
+     * @param nouvellePosition - Nouvelle position de l'acteur
+     */
     public void setPosition(Vecteur2<Integer> nouvellePosition){
         this.position = nouvellePosition;
     }
 
+    /**
+     * Getter position
+     * @return - Retourne la position de l'acteur
+     */
     public Vecteur2<Integer> getPosition(){
         return this.position;
     }
 
 
+    /**
+     * Méthode abstraite qui permet d'implémenter le dessin de l'acteur d'une certaine façon
+     *
+     * @return - Retourne les dessins associés à l'acteur
+     */
     public abstract ArrayList<Dessin> dessiner();
-    public abstract void mettreAJours();
 
+    /**
+     * Getter dessins
+     * @return - Récupère les dessins associés à l'acteur
+     */
     public ArrayList<Dessin> getDessins(){
         return this.dessins;
     }
@@ -53,9 +84,10 @@ public abstract class Acteur {
     public abstract void onPreAjout(Case caseActuelle);
     public abstract void onAjoute(Case caseActuelle);
 
-    public abstract void onMisAJour();
-    public abstract void onSupprime();
-    public abstract void onDessine();
+    /**
+     * Appelé lorsque l'acteur est cliqué
+     * @param event
+     */
 
     public abstract void onClique(MouseEvent event);
 
