@@ -12,8 +12,11 @@ import java.util.*;
 
 public class Pente {
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
+        creerJeu();
+    }
 
+    public static void creerJeu(){
 
         Fenetre fenetrePrincipale = new Fenetre("Test", 800, 600);
 
@@ -25,45 +28,37 @@ public class Pente {
         JMenuItem historique = new JMenuItem("Historique");
 
 
-        historique.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println("Historique ouvert");
-                JDialog historiqueFrame = new JDialog(fenetrePrincipale, "Historique", true);
+        historique.addActionListener(__ -> {
+            System.out.println("Historique ouvert");
+            JDialog historiqueFrame = new JDialog(fenetrePrincipale, "Historique", true);
 
 
-                JPanel logsPanel = new JPanel();
+            JPanel logsPanel = new JPanel();
 
-                logsPanel.setLayout(new BoxLayout(logsPanel, BoxLayout.Y_AXIS));
+            logsPanel.setLayout(new BoxLayout(logsPanel, BoxLayout.Y_AXIS));
 
-                DefaultListModel<String> logs = new DefaultListModel<>();
+            DefaultListModel<String> logs = new DefaultListModel<>();
 
-                logs.addAll(Jeu.getInstance().getLogs());
+            logs.addAll(Jeu.getInstance().getLogs());
 
-                JList<String> listeLogs = new JList<String>(logs);
-
-
-                logsPanel.add(new JScrollPane(listeLogs) );
-
-                JButton btnFermer = new JButton("Fermer");
-
-                btnFermer.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        historiqueFrame.dispose();
-                    }
-                });
-
-                logsPanel.add(btnFermer);
-
-                historiqueFrame.add(logsPanel);
+            JList<String> listeLogs = new JList<>(logs);
 
 
-                historiqueFrame.pack();
-                historiqueFrame.getContentPane().validate();
-                historiqueFrame.getContentPane().repaint();
-                historiqueFrame.setVisible(true);
-            }
+            logsPanel.add(new JScrollPane(listeLogs) );
+
+            JButton btnFermer = new JButton("Fermer");
+
+            btnFermer.addActionListener(___ -> historiqueFrame.dispose());
+
+            logsPanel.add(btnFermer);
+
+            historiqueFrame.add(logsPanel);
+
+
+            historiqueFrame.pack();
+            historiqueFrame.getContentPane().validate();
+            historiqueFrame.getContentPane().repaint();
+            historiqueFrame.setVisible(true);
         });
 
         menu.add(historique);
@@ -232,371 +227,390 @@ public class Pente {
         parametresPartiePanel.setLayout(new BoxLayout(parametresPartiePanel,BoxLayout.Y_AXIS));
 
 
-        demarrerBouton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
+        demarrerBouton.addActionListener(__ -> {
 
-                parametresPartieFrame.setTitle("Ajouter les joueurs");
-                JPanel creationJoueurPanel = new JPanel();
+            parametresPartieFrame.setTitle("Ajouter les joueurs");
+            JPanel creationJoueurPanel = new JPanel();
 
-                // Menu des couleurs
-                HashMap<String, MG2D.Couleur> couleursDisponibles = new HashMap<>(Map.ofEntries(
-                        Map.entry(" ", Couleur.NOIR),
-                        Map.entry("Jaune", Couleur.JAUNE),
-                        Map.entry("Rouge", Couleur.ROUGE),
-                        Map.entry("Bleu", Couleur.BLEU),
-                        Map.entry("Vert", Couleur.VERT),
-                        Map.entry("Magenta", Couleur.MAGENTA),
-                        Map.entry("Cyan", Couleur.CYAN),
-                        Map.entry("Orange", Couleur.ORANGE),
-                        Map.entry("Gris", Couleur.GRIS_FONCE)
-                ));
+            // Menu des couleurs
+            HashMap<String, Couleur> couleursDisponibles = new HashMap<>(Map.ofEntries(
+                    Map.entry(" ", Couleur.NOIR),
+                    Map.entry("Jaune", Couleur.JAUNE),
+                    Map.entry("Rouge", Couleur.ROUGE),
+                    Map.entry("Bleu", Couleur.BLEU),
+                    Map.entry("Vert", Couleur.VERT),
+                    Map.entry("Magenta", Couleur.MAGENTA),
+                    Map.entry("Cyan", Couleur.CYAN),
+                    Map.entry("Orange", Couleur.ORANGE),
+                    Map.entry("Gris", Couleur.GRIS_FONCE)
+            ));
 
-                creationJoueurPanel.setLayout(new GridBagLayout());
+            creationJoueurPanel.setLayout(new GridBagLayout());
 
-                GridBagConstraints contrainteGrille = new GridBagConstraints();
+            GridBagConstraints contrainteGrille = new GridBagConstraints();
 
 
-                ArrayList<Joueur> joueurs = new ArrayList<>();
+            ArrayList<Joueur> joueurs = new ArrayList<>();
 
 
 
-                // Stock les références fortes des JComboBox de chaque joueur dans un tableau
-                ArrayList<JComboBox<String>> referencesChoixCouleur = new ArrayList<>();
+            // Stock les références fortes des JComboBox de chaque joueur dans un tableau
+            ArrayList<JComboBox<String>> referencesChoixCouleur = new ArrayList<>();
 
 
-                // Bouton démarrer
-                JButton validerBtn = new JButton("Valider");
+            // Bouton démarrer
+            JButton validerBtn = new JButton("Valider");
 
-                validerBtn.setEnabled(false);
+            validerBtn.setEnabled(false);
 
-                // Pour chaque joueur...
+            // Pour chaque joueur...
 
-                for(int i = 0; i < spinnerValue.getNumber().intValue(); i++){
+            for(int i = 0; i < spinnerValue.getNumber().intValue(); i++){
 
-                    JPanel joueurPanel = new JPanel();
-                    joueurPanel.setLayout(new BoxLayout(joueurPanel, BoxLayout.Y_AXIS));
-                    // Joueur
+                JPanel joueurPanel = new JPanel();
+                joueurPanel.setLayout(new BoxLayout(joueurPanel, BoxLayout.Y_AXIS));
+                // Joueur
 
-                    Joueur joueur = new Joueur(); // Cette référence va nous servir dans les callbacks
+                Joueur joueur = new Joueur(); // Cette référence va nous servir dans les callbacks
 
-                    joueurPanel.add(new JLabel("Joueur " + (i + 1)));
+                joueurPanel.add(new JLabel("Joueur " + (i + 1)));
 
-                    joueurPanel.add(new JLabel("Choisir couleur : "));
+                joueurPanel.add(new JLabel("Choisir couleur : "));
 
-                    // Sélection couleur
+                // Sélection couleur
 
-                    JComboBox<String> selectionCouleursComboBox = new JComboBox<>(couleursDisponibles.keySet().toArray(new String[0]));
+                JComboBox<String> selectionCouleursComboBox = new JComboBox<>(couleursDisponibles.keySet().toArray(new String[0]));
 
-                    // Ajoute la référence forte au tableau
-                    referencesChoixCouleur.add(selectionCouleursComboBox);
-                    
-                    selectionCouleursComboBox.addItemListener(new ItemListener() {
-                        @Override
-                        public void itemStateChanged(ItemEvent item) {                            
-                           
-                            // Switch en fonction de l'event de l'item
-                            switch(item.getStateChange()){
-                                case ItemEvent.SELECTED:
+                // Ajoute la référence forte au tableau
+                referencesChoixCouleur.add(selectionCouleursComboBox);
 
-                                    joueur.setCouleur( couleursDisponibles.get( String.valueOf( item.getItem() )) );
-                                    selectionCouleursComboBox.setSelectedItem(selectionCouleursComboBox.getSelectedItem());
-                                    
-                                    // Empêche de selectionner une couleur déjà prise
-                                    selectionCouleursComboBox.setEnabled(false);
-                                    referencesChoixCouleur.remove(selectionCouleursComboBox);
-                                    referencesChoixCouleur.forEach(comboBox ->
-                                        comboBox.removeItemAt( selectionCouleursComboBox.getSelectedIndex() )
-                                    );
-
-                                    // Si plus de références dans le tableau alors toutes les couleurs sont sélectionnées 
-                                    if(referencesChoixCouleur.size() == 0)
-                                        validerBtn.setEnabled(true);
-
-                                    break;
-
-                                default:
-                                    break;
-                            }
-
-                        }
-                    });
-
-                    joueurPanel.add(selectionCouleursComboBox);
-
-                    // Nom
-                    joueurPanel.add(new JLabel("Nom"));
-
-                    JTextField nomJoueur = new JTextField();
-
-                    nomJoueur.getDocument().addDocumentListener(new DocumentListener() {
-                        @Override
-                        public void insertUpdate(DocumentEvent documentEvent) {
-                            joueur.setNom(nomJoueur.getText());
-                            System.out.println("Nouveau nom :" + joueur.getNom());
-                        }
-
-                        @Override
-                        public void removeUpdate(DocumentEvent documentEvent) {
-
-                        }
-
-                        @Override
-                        public void changedUpdate(DocumentEvent documentEvent) {
-
-                        }
-                    });
-                    joueurPanel.add(nomJoueur);
-
-                    // Prénom
-                    joueurPanel.add(new JLabel("Prénom"));
-
-
-                    JTextField prenomJoueur = new JTextField();
-
-                    prenomJoueur.getDocument().addDocumentListener(new DocumentListener() {
-                        @Override
-                        public void insertUpdate(DocumentEvent documentEvent) {
-                            joueur.setPrenom(prenomJoueur.getText());
-                            System.out.println("Nouveau prénom : " + prenomJoueur.getText());
-                        }
-
-                        @Override
-                        public void removeUpdate(DocumentEvent documentEvent) {
-
-                        }
-
-                        @Override
-                        public void changedUpdate(DocumentEvent documentEvent) {
-
-                        }
-                    });
-
-                    // Ajout du joueur au tableau
-                    joueurs.add(joueur);
-
-
-                    // On affiche les panels des différents joueurs
-                    joueurPanel.add(prenomJoueur);
-
-                    contrainteGrille.fill = GridBagConstraints.HORIZONTAL;
-                    contrainteGrille.gridx = i;
-                    contrainteGrille.gridy = 0;
-
-                    creationJoueurPanel.add(joueurPanel, contrainteGrille);
-                }
-
-
-                // Zone de texte concernant l'avancé de la partie
-
-                ZoneTexte joueursZoneTexte = new ZoneTexte();
-
-                Texte joueurActuel = new Texte();
-                Texte joueurSuivant = new Texte();
-
-                joueursZoneTexte.ajouterTexte(joueurActuel);
-                joueursZoneTexte.ajouterTexte(joueurSuivant);
-
-                scenePrincipale.ajouter(new Vecteur2<>(1, 0), joueursZoneTexte, Scene.Placement.MILIEU);
-
-                validerBtn.addActionListener(new ActionListener() {
+                selectionCouleursComboBox.addItemListener(new ItemListener() {
                     @Override
-                    public void actionPerformed(ActionEvent actionEvent) {
+                    public void itemStateChanged(ItemEvent item) {
 
-                        validerBtn.setEnabled(false);
+                        // Switch en fonction de l'event de l'item
+                        switch(item.getStateChange()){
+                            case ItemEvent.SELECTED:
 
-                        Collections.shuffle(joueurs, new Random());
+                                joueur.setCouleur( couleursDisponibles.get( String.valueOf( item.getItem() )) );
+                                selectionCouleursComboBox.setSelectedItem(selectionCouleursComboBox.getSelectedItem());
 
-                        Jeu.getInstance().getJoueursQueue().addAll(joueurs);
-
-                        
-                        joueurActuel.setTexte("");
-                        joueurSuivant.setTexte(String.format("Joueur qui démarre : %s %s",
-                        Jeu.getInstance().getJoueursQueue().peek().getNom(),
-                        Jeu.getInstance().getJoueursQueue().peek().getPrenom()
-                        ));
-
-
-
-                        parametresPartieFrame.dispose();
-
-                        Jeu.getInstance().setJoueurActuel(Jeu.getInstance().getJoueursQueue().poll());
-
-                        // Zone de texte spécifique au joueur actuel
-
-                        ZoneTexte joueurZoneTexte = new ZoneTexte();
-
-
-                        Texte pionsJoueurActuel = new Texte();
-                        Texte nombreCapture = new Texte();
-
-                        pionsJoueurActuel.setTexte("");
-                        nombreCapture.setTexte("");
-
-                        joueurZoneTexte.ajouterTexte(pionsJoueurActuel);
-                        joueurZoneTexte.ajouterTexte(nombreCapture);
-
-                        scenePrincipale.ajouter(new Vecteur2<>(3, 0), joueurZoneTexte, Scene.Placement.MILIEU);
-
-                        plateau.ajouterOnPionPlaceListerner(new Plateau.OnPionPlaceListener() {
-                            @Override
-                            public void onPionPlaceListener(Case casePlacement, Pion pion) {
-
-                                Jeu.getInstance().getDerniersPionsSupprimes().clear();
-                                annulerCoup.setEnabled(true);
-
-                                plateau.detecterCaptureDiagonaleGauche(casePlacement);
-
-                                plateau.detecterCaptureDiagonaleDroite(casePlacement);
-
-                                plateau.detecterCaptureHorizontale(casePlacement, pion);
-
-                                plateau.detecterCaptureVerticale(casePlacement, pion);
-
-                                if(plateau.getPartieEstGagnante(casePlacement)){
-                                    System.out.println("Partie gagnante");
-                                }
-
-                                Jeu.getInstance().getJoueurActuel().ajouterPion(pion);
-                                Jeu.getInstance().setDernierPionPlace(pion);
-
-                                // Enlève callback précédent si existant
-                                if(annulerCoup.getActionListeners().length > 0 )
-                                    annulerCoup.removeActionListener(annulerCoup.getActionListeners()[0]);
-
-                                // Ajoute un callback pour supprimer le pion du plateau
-                                annulerCoup.addActionListener(new ActionListener() {
-                                    @Override
-                                    public void actionPerformed(ActionEvent actionEvent) {
-
-                                        annulerCoup.setEnabled(false);
-
-                                        //plateau.getGrille().supprimer(casePlacement.getPosition(), pion);
-
-                                        // Pion joué à supprimer
-                                        plateau.getGrille().supprimer(casePlacement.getPosition(), Jeu.getInstance().getDernierPionPlace());
-
-                                        Jeu.getInstance().getJoueursQueue().peek().getPions().remove(pion);
-
-                                        fenetrePrincipale.supprimer(pion.getDessins().get(0));
-                                        // Pions à rajouter avant la capture
-                                        if(Jeu.getInstance().getDerniersPionsSupprimes().size() > 0) {
-                                            Jeu.getInstance().getJoueursQueue().peek().setNbrCapture(
-                                                    Jeu.getInstance().getJoueursQueue().peek().getNbrCapture() -
-                                                            (int) (Jeu.getInstance().getDerniersPionsSupprimes().keySet().size() / 2));
-
-
-                                            Jeu.getInstance().getDerniersPionsSupprimes().keySet().forEach(p -> Jeu.getInstance().getJoueurActuel().ajouterPion(p));
-                                        }
-                                        Jeu.getInstance().getDerniersPionsSupprimes().keySet().forEach(p -> {
-                                            plateau.getGrille().ajouter(Jeu.getInstance().getDerniersPionsSupprimes().get(p), p);
-                                            fenetrePrincipale.ajouter(p.getDessins().get(0));
-                                        });
-
-
-
-                                        //fenetrePrincipale.supprimer(pion.getDessins().get(0));
-
-
-                                        joueurActuel.setTexte(String.format("Prochain Joueur : %s %s",
-                                                Jeu.getInstance().getJoueurActuel().getNom(),
-                                                Jeu.getInstance().getJoueurActuel().getPrenom()
-                                                )
-                                        );
-
-                                        // Màj de l'interface
-
-
-
-                                        joueurSuivant.setTexte(String.format("Joueur Actuel : %s %s",
-                                                Jeu.getInstance().getJoueursQueue().peek().getNom(),
-                                                Jeu.getInstance().getJoueursQueue().peek().getPrenom()
-                                                )
-                                        );
-
-                                        Jeu.getInstance().getJoueursQueue().add(Jeu.getInstance().getJoueurActuel());
-
-                                        Jeu.getInstance().setJoueurActuel(Jeu.getInstance().getJoueursQueue().poll());
-
-
-
-                                        pionsJoueurActuel.setTexte(
-                                                String.format("Pions du joueur actuel : %d",
-                                                        Jeu.getInstance().getJoueurActuel().getNbrPions()
-                                                )
-                                        );
-
-                                        nombreCapture.setTexte(
-                                                String.format("Nombre de captures : %d",
-                                                        Jeu.getInstance().getJoueurActuel().getNbrCapture()
-                                                )
-                                        );
-                                        plateau.dessiner();
-                                        fenetrePrincipale.rafraichir();
-
-                                    }
-                                });
-
-                                Jeu.getInstance().ajouterLog(
-                                        String.format(
-                                                "Le joueur %s %s a placé un pion en %d, %d",
-                                                Jeu.getInstance().getJoueurActuel().getNom(),
-                                                Jeu.getInstance().getJoueurActuel().getPrenom(),
-                                                casePlacement.getPosition().getX(),
-                                                casePlacement.getPosition().getY()
-                                                )
+                                // Empêche de selectionner une couleur déjà prise
+                                selectionCouleursComboBox.setEnabled(false);
+                                referencesChoixCouleur.remove(selectionCouleursComboBox);
+                                referencesChoixCouleur.forEach(comboBox ->
+                                    comboBox.removeItemAt( selectionCouleursComboBox.getSelectedIndex() )
                                 );
 
-                                // Màj de l'interface
+                                // Si plus de références dans le tableau alors toutes les couleurs sont sélectionnées
+                                if(referencesChoixCouleur.size() == 0)
+                                    validerBtn.setEnabled(true);
 
-                                joueurActuel.setTexte(String.format("Prochain Joueur : %s %s",
-                                        Jeu.getInstance().getJoueurActuel().getNom(),
-                                        Jeu.getInstance().getJoueurActuel().getPrenom()
-                                        )
-                                        );
+                                break;
 
-                                joueurSuivant.setTexte(String.format("Joueur Actuel : %s %s",
-                                        Jeu.getInstance().getJoueursQueue().peek().getNom(),
-                                        Jeu.getInstance().getJoueursQueue().peek().getPrenom()
-                                        )
-                                        );
-
-                                pionsJoueurActuel.setTexte(
-                                        String.format("Pions du joueur actuel : %d",
-                                                Jeu.getInstance().getJoueurActuel().getNbrPions()
-                                                )
-                                                );
-
-                                nombreCapture.setTexte(
-                                    String.format("Nombre de captures : %d",
-                                            Jeu.getInstance().getJoueurActuel().getNbrCapture()
-                                            )
-                                            );
-
-                                fenetrePrincipale.rafraichir();
-
-                            }
-                        });
-
-
+                            default:
+                                break;
+                        }
 
                     }
                 });
 
+                joueurPanel.add(selectionCouleursComboBox);
+
+                // Nom
+                joueurPanel.add(new JLabel("Nom"));
+
+                JTextField nomJoueur = new JTextField();
+
+                nomJoueur.getDocument().addDocumentListener(new DocumentListener() {
+                    @Override
+                    public void insertUpdate(DocumentEvent documentEvent) {
+                        joueur.setNom(nomJoueur.getText());
+                        System.out.println("Nouveau nom :" + joueur.getNom());
+                    }
+
+                    @Override
+                    public void removeUpdate(DocumentEvent documentEvent) {
+
+                    }
+
+                    @Override
+                    public void changedUpdate(DocumentEvent documentEvent) {
+
+                    }
+                });
+                joueurPanel.add(nomJoueur);
+
+                // Prénom
+                joueurPanel.add(new JLabel("Prénom"));
+
+
+                JTextField prenomJoueur = new JTextField();
+
+                prenomJoueur.getDocument().addDocumentListener(new DocumentListener() {
+                    @Override
+                    public void insertUpdate(DocumentEvent documentEvent) {
+                        joueur.setPrenom(prenomJoueur.getText());
+                        System.out.println("Nouveau prénom : " + prenomJoueur.getText());
+                    }
+
+                    @Override
+                    public void removeUpdate(DocumentEvent documentEvent) {
+
+                    }
+
+                    @Override
+                    public void changedUpdate(DocumentEvent documentEvent) {
+
+                    }
+                });
+
+                // Ajout du joueur au tableau
+                joueurs.add(joueur);
+
+
+                // On affiche les panels des différents joueurs
+                joueurPanel.add(prenomJoueur);
+
                 contrainteGrille.fill = GridBagConstraints.HORIZONTAL;
-                contrainteGrille.gridx = 0;
-                contrainteGrille.gridy = 1;
-                contrainteGrille.gridwidth = spinnerValue.getNumber().intValue();
-                creationJoueurPanel.add(validerBtn, contrainteGrille);
+                contrainteGrille.gridx = i;
+                contrainteGrille.gridy = 0;
 
-                parametresPartieFrame.getContentPane().removeAll();
-
-                parametresPartieFrame.getContentPane().add(creationJoueurPanel);
-
-
-                parametresPartieFrame.pack();
-
+                creationJoueurPanel.add(joueurPanel, contrainteGrille);
             }
+
+
+            // Zone de texte concernant l'avancé de la partie
+
+            ZoneTexte joueursZoneTexte = new ZoneTexte();
+
+            Texte joueurActuel = new Texte();
+            Texte joueurSuivant = new Texte();
+
+            joueursZoneTexte.ajouterTexte(joueurActuel);
+            joueursZoneTexte.ajouterTexte(joueurSuivant);
+
+            scenePrincipale.ajouter(new Vecteur2<>(1, 0), joueursZoneTexte, Scene.Placement.MILIEU);
+
+            validerBtn.addActionListener(___ -> {
+
+                validerBtn.setEnabled(false);
+
+                Collections.shuffle(joueurs, new Random());
+
+                Jeu.getInstance().getJoueursQueue().addAll(joueurs);
+
+
+                joueurActuel.setTexte("");
+                joueurSuivant.setTexte(String.format("Joueur qui démarre : %s %s",
+                Jeu.getInstance().getJoueursQueue().peek().getNom(),
+                Jeu.getInstance().getJoueursQueue().peek().getPrenom()
+                ));
+
+
+
+                parametresPartieFrame.dispose();
+
+                Jeu.getInstance().setJoueurActuel(Jeu.getInstance().getJoueursQueue().poll());
+
+                // Zone de texte spécifique au joueur actuel
+
+                ZoneTexte joueurZoneTexte = new ZoneTexte();
+
+
+                Texte pionsJoueurActuel = new Texte();
+                Texte nombreCapture = new Texte();
+
+                pionsJoueurActuel.setTexte("");
+                nombreCapture.setTexte("");
+
+                joueurZoneTexte.ajouterTexte(pionsJoueurActuel);
+                joueurZoneTexte.ajouterTexte(nombreCapture);
+
+                scenePrincipale.ajouter(new Vecteur2<>(3, 0), joueurZoneTexte, Scene.Placement.MILIEU);
+
+                plateau.ajouterOnPionPlaceListerner(new Plateau.OnPionPlaceListener() {
+                    @Override
+                    public void onPionPlaceListener(Case casePlacement, Pion pion) {
+
+                        Jeu.getInstance().getDerniersPionsSupprimes().clear();
+                        annulerCoup.setEnabled(true);
+
+                        plateau.detecterCaptureDiagonaleGauche(casePlacement);
+
+                        plateau.detecterCaptureDiagonaleDroite(casePlacement);
+
+                        plateau.detecterCaptureHorizontale(casePlacement, pion);
+
+                        plateau.detecterCaptureVerticale(casePlacement, pion);
+
+                        if(plateau.getPartieEstGagnante(casePlacement)){
+                            System.out.println("Partie gagnante");
+
+
+                            JDialog victoireDialog = new JDialog(fenetrePrincipale, "Victoire", true);
+
+                            JPanel victoirePanel = new JPanel();
+                            victoirePanel.setLayout(new BoxLayout(victoirePanel, BoxLayout.Y_AXIS));
+                            victoirePanel.add(new JLabel(String.format("Victoire ! %s a gagné !", Jeu.getInstance().getJoueurActuel())));
+
+                            JButton recommencerBtn = new JButton("Recommencer la partie");
+
+                            recommencerBtn.addActionListener(__ -> {
+                                fenetrePrincipale.dispose();
+                                creerJeu();
+                            });
+
+                            victoirePanel.add(recommencerBtn);
+
+                            JButton quitterBtn = new JButton("Quitter");
+
+                            quitterBtn.addActionListener(__ -> fenetrePrincipale.dispose());
+
+                            victoirePanel.add(quitterBtn);
+
+                            victoireDialog.add(victoirePanel);
+                            victoireDialog.pack();
+                            victoireDialog.getContentPane().validate();
+                            victoireDialog.getContentPane().repaint();
+                            victoireDialog.setVisible(true);
+                        }
+
+                        Jeu.getInstance().getJoueurActuel().ajouterPion(pion);
+                        Jeu.getInstance().setDernierPionPlace(pion);
+
+                        // Enlève callback précédent si existant
+                        if(annulerCoup.getActionListeners().length > 0 )
+                            annulerCoup.removeActionListener(annulerCoup.getActionListeners()[0]);
+
+                        // Ajoute un callback pour supprimer le pion du plateau
+                        annulerCoup.addActionListener(__ -> {
+
+                            annulerCoup.setEnabled(false);
+
+                            //plateau.getGrille().supprimer(casePlacement.getPosition(), pion);
+
+                            // Pion joué à supprimer
+                            plateau.getGrille().supprimer(casePlacement.getPosition(), Jeu.getInstance().getDernierPionPlace());
+
+                            Jeu.getInstance().getJoueursQueue().peek().getPions().remove(pion);
+
+                            fenetrePrincipale.supprimer(pion.getDessins().get(0));
+                            // Pions à rajouter avant la capture
+                            if(Jeu.getInstance().getDerniersPionsSupprimes().size() > 0) {
+                                Jeu.getInstance().getJoueursQueue().peek().setNbrCapture(
+                                        Jeu.getInstance().getJoueursQueue().peek().getNbrCapture() -
+                                                (int) (Jeu.getInstance().getDerniersPionsSupprimes().keySet().size() / 2));
+
+
+                                Jeu.getInstance().getDerniersPionsSupprimes().keySet().forEach(p -> Jeu.getInstance().getJoueurActuel().ajouterPion(p));
+                            }
+                            Jeu.getInstance().getDerniersPionsSupprimes().keySet().forEach(p -> {
+                                plateau.getGrille().ajouter(Jeu.getInstance().getDerniersPionsSupprimes().get(p), p);
+                                fenetrePrincipale.ajouter(p.getDessins().get(0));
+                            });
+
+
+
+                            //fenetrePrincipale.supprimer(pion.getDessins().get(0));
+
+
+                            joueurActuel.setTexte(String.format("Prochain Joueur : %s %s",
+                                    Jeu.getInstance().getJoueurActuel().getNom(),
+                                    Jeu.getInstance().getJoueurActuel().getPrenom()
+                                    )
+                            );
+
+                            // Màj de l'interface
+
+
+
+                            joueurSuivant.setTexte(String.format("Joueur Actuel : %s %s",
+                                    Jeu.getInstance().getJoueursQueue().peek().getNom(),
+                                    Jeu.getInstance().getJoueursQueue().peek().getPrenom()
+                                    )
+                            );
+
+                            Jeu.getInstance().getJoueursQueue().add(Jeu.getInstance().getJoueurActuel());
+
+                            Jeu.getInstance().setJoueurActuel(Jeu.getInstance().getJoueursQueue().poll());
+
+
+
+                            pionsJoueurActuel.setTexte(
+                                    String.format("Pions du joueur actuel : %d",
+                                            Jeu.getInstance().getJoueurActuel().getNbrPions()
+                                    )
+                            );
+
+                            nombreCapture.setTexte(
+                                    String.format("Nombre de captures : %d",
+                                            Jeu.getInstance().getJoueurActuel().getNbrCapture()
+                                    )
+                            );
+                            plateau.dessiner();
+                            fenetrePrincipale.rafraichir();
+
+                        });
+
+                        Jeu.getInstance().ajouterLog(
+                                String.format(
+                                        "Le joueur %s %s a placé un pion en %d, %d",
+                                        Jeu.getInstance().getJoueurActuel().getNom(),
+                                        Jeu.getInstance().getJoueurActuel().getPrenom(),
+                                        casePlacement.getPosition().getX(),
+                                        casePlacement.getPosition().getY()
+                                        )
+                        );
+
+                        // Màj de l'interface
+
+                        joueurActuel.setTexte(String.format("Prochain Joueur : %s %s",
+                                Jeu.getInstance().getJoueurActuel().getNom(),
+                                Jeu.getInstance().getJoueurActuel().getPrenom()
+                                )
+                                );
+
+                        joueurSuivant.setTexte(String.format("Joueur Actuel : %s %s",
+                                Jeu.getInstance().getJoueursQueue().peek().getNom(),
+                                Jeu.getInstance().getJoueursQueue().peek().getPrenom()
+                                )
+                                );
+
+                        pionsJoueurActuel.setTexte(
+                                String.format("Pions du joueur actuel : %d",
+                                        Jeu.getInstance().getJoueurActuel().getNbrPions()
+                                        )
+                                        );
+
+                        nombreCapture.setTexte(
+                            String.format("Nombre de captures : %d",
+                                    Jeu.getInstance().getJoueurActuel().getNbrCapture()
+                                    )
+                                    );
+
+                        fenetrePrincipale.rafraichir();
+
+                    }
+                });
+
+
+
+            });
+
+            contrainteGrille.fill = GridBagConstraints.HORIZONTAL;
+            contrainteGrille.gridx = 0;
+            contrainteGrille.gridy = 1;
+            contrainteGrille.gridwidth = spinnerValue.getNumber().intValue();
+            creationJoueurPanel.add(validerBtn, contrainteGrille);
+
+            parametresPartieFrame.getContentPane().removeAll();
+
+            parametresPartieFrame.getContentPane().add(creationJoueurPanel);
+
+
+            parametresPartieFrame.pack();
+
         });
 
 

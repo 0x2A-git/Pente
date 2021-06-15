@@ -24,6 +24,9 @@ public class Jeu {
 
     private int nbJoueurs = -1;
 
+    private Pion dernierPionPlace = null;
+
+
     private ArrayList<String> logs = new ArrayList<>();
 
 
@@ -35,8 +38,6 @@ public class Jeu {
         return this.fenetre;
     }
 
-
-    private Pion dernierPionPlace = null;
 
     public Pion getDernierPionPlace() {
         return dernierPionPlace;
@@ -104,6 +105,14 @@ public class Jeu {
     public void init(Fenetre fenetre, Scene sceneDepart) {
         this.fenetre = fenetre;
         this.sceneActuelle = sceneDepart;
+
+        this.joueurActuel = null;
+
+        this.joueurs = new ArrayDeque<>();
+
+        this.nbJoueurs = -1;
+
+        this.dernierPionPlace = null;
     }
 
     public Queue<Joueur> getJoueursQueue(){
