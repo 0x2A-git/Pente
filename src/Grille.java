@@ -468,4 +468,5 @@ public class Grille implements Case.Callbacks {
         this.matrice.get(position.getX()).get(position.getY()).getObjets().remove(objet);
     }
 
+
 }

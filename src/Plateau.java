@@ -1,4 +1,5 @@
 import MG2D.Couleur;
+import MG2D.Fenetre;
 import MG2D.geometrie.Dessin;
 import MG2D.geometrie.Ligne;
 import MG2D.geometrie.Point;
@@ -6,6 +7,7 @@ import math.Vecteur2;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Plateau extends Acteur {
 
@@ -75,6 +77,10 @@ public class Plateau extends Acteur {
                 caseActuelle.getPosition(),
                 pion
         );
+
+        pion.ajouterComposant(PosableComposant.class);
+
+        pion.getComposant(PosableComposant.class).setPosition(caseActuelle.getPosition());
 
         Jeu.getInstance().dessiner(pion.dessiner());
 
@@ -208,11 +214,180 @@ public class Plateau extends Acteur {
     }
 
 
+    public void detecterCaptureDiagonaleDroite(Case casePlacement){
+
+        LinkedList<Acteur> candidats = new LinkedList<>();
+
+        // capture diagonale droite
+        for(int i = -3; i < 4; i++){
+
+            // Check Out of Bounds bords à gauche
+            if(casePlacement.getPosition().getX() + i < 0 ||
+                    casePlacement.getPosition().getY() + i < 0)
+                continue;
+
+            // Check Out of Bounds bords à droite
+            if(casePlacement.getPosition().getX() + i > this.getGrille().getMatrice().get(0).size() - 1 ||
+                    casePlacement.getPosition().getY() + i > this.getGrille().getMatrice().get(0).size() - 1)
+                continue;
+
+
+            Case diagonaleGauche = this.getGrille().getCase(
+                    casePlacement.getPosition().getX() + i,
+                    casePlacement.getPosition().getY() + i
+            );
+
+            //System.out.println(diagonaleGauche.getPosition().getX() + ", " + diagonaleGauche.getPosition().getY());
+
+            try{
+
+                candidats.add(diagonaleGauche.getObjets().get(0));
+
+
+                //System.out.println(i);
+
+                // Si on arrive à la case cliquée ou à la dernière case de la diagonale gauche...
+                if(diagonaleGauche.getPosition().equals(casePlacement.getPosition()) || i == 3) {
+
+                    //System.out.println(candidats);
+
+                    Acteur debut = i == 3 ? candidats.pollLast() : candidats.pollFirst();
+
+                    if(debut != null && debut.getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur()){
+                        //System.out.println("ok");
+
+                        ArrayList<Acteur> aEnlever = new ArrayList<>();
+
+                        // On dequeue mes candidats et on vérifie qu'ils ne sont pas de la même couleur que le joueur actuel
+                        while(!candidats.isEmpty()){
+                            Acteur act = candidats.poll();
+
+                            if (act == null) break;
+
+                            if(act.getComposant(ColorableComposant.class).getCouleur() != Jeu.getInstance().getJoueurActuel().getCouleur())
+                                aEnlever.add(act);
+                        }
+
+                        // Enfin on supprime les pions si capture valide en Y
+                        if(aEnlever.size() == 2) {
+                            Jeu.getInstance().getJoueurActuel().setNbrCapture(Jeu.getInstance().getJoueurActuel().getNbrCapture() + 1);
+                            aEnlever.forEach(p -> {
+                                Jeu.getInstance().getDerniersPionsSupprimes().put(p, p.getComposant(PosableComposant.class).getPosition());
+
+                                Jeu.getInstance().getJoueursQueue().peek().getPions().remove(p);
+
+                                this.getGrille().supprimer(
+                                        p.getComposant(PosableComposant.class).getPosition(),
+                                        p
+                                );
+                                Jeu.getInstance().getFenetre().supprimer(p.getDessins().get(0));
+
+                            });
+                        }
+
+                    }
+
+                    candidats = new LinkedList<>();
+                }
+
+            } catch(IndexOutOfBoundsException ex){
+
+                candidats.add(null);
+            }
+
+        }
+    }
+
+    public void detecterCaptureDiagonaleGauche(Case casePlacement){
+        LinkedList<Acteur> candidats = new LinkedList<>();
+
+        // capture diagonale gauche
+        for(int i = -3; i < 4; i++){
+
+
+            // Check Out of Bounds bords à gauche
+            if(casePlacement.getPosition().getX() - i < 0 ||
+                    casePlacement.getPosition().getY() + i < 0)
+                continue;
+
+            // Check Out of Bounds bords à droite
+            if(casePlacement.getPosition().getX() - i > this.getGrille().getMatrice().get(0).size() - 1 ||
+                    casePlacement.getPosition().getY() + i > this.getGrille().getMatrice().get(0).size() - 1)
+                continue;
+
+            Case diagonaleGauche = this.getGrille().getCase(
+                    casePlacement.getPosition().getX() - i,
+                    casePlacement.getPosition().getY() + i
+            );
+
+            //System.out.println(diagonaleGauche.getPosition().getX() + ", " + diagonaleGauche.getPosition().getY());
+
+            try{
+
+                candidats.add(diagonaleGauche.getObjets().get(0));
+
+
+                //System.out.println(i);
+                if(diagonaleGauche.getPosition().equals(casePlacement.getPosition()) || i == 3) {
+
+                    //System.out.println(candidats);
+
+                    // Si fin de la diagonale prendre le dernier pion sinon si milieu de la diago prendre le premier pion
+                    Acteur debut = i == 3 ? candidats.pollLast() : candidats.pollFirst();
+
+                    if(debut != null && debut.getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur()){
+                       // System.out.println("ok");
+
+                        ArrayList<Acteur> aEnlever = new ArrayList<>();
+
+                        // On dequeue mes candidats et on vérifie qu'ils ne sont pas de la même couleur que le joueur actuel
+                        while(!candidats.isEmpty()){
+                            Acteur act = candidats.poll();
+
+                            if (act == null) break;
+
+                            if(act.getComposant(ColorableComposant.class).getCouleur() != Jeu.getInstance().getJoueurActuel().getCouleur())
+                                aEnlever.add(act);
+                        }
+
+                        // Enfin on supprime les pions si capture valide en Y
+                        if(aEnlever.size() == 2) {
+                            Jeu.getInstance().getJoueurActuel().setNbrCapture(Jeu.getInstance().getJoueurActuel().getNbrCapture() + 1);
+                            aEnlever.forEach(p -> {
+                                Jeu.getInstance().getDerniersPionsSupprimes().put(p, p.getComposant(PosableComposant.class).getPosition());
+
+                                Jeu.getInstance().getJoueursQueue().peek().getPions().remove(p);
+
+                                this.getGrille().supprimer(
+                                        p.getComposant(PosableComposant.class).getPosition(),
+                                        p
+                                );
+                                Jeu.getInstance().getFenetre().supprimer(p.getDessins().get(0));
+
+                            });
+                        }
+
+                    }
+
+                    candidats = new LinkedList<>();
+                }
+
+            } catch(IndexOutOfBoundsException ex){
+
+                candidats.add(null);
+            }
+
+        }
+    }
+
     private boolean getVictoireHorizontaleVerticale(Case casePlacement){
 
         int nbAlignementX = 0;
         int nbAlignementY = 0;
 
+        ArrayList<Acteur> pionsACapturer = new ArrayList<>();
+
+        boolean possibleCapture = false;
 
         /**
          * Regarde 5 voisins en horizontal, en vertical et en diagonal
@@ -229,15 +404,19 @@ public class Plateau extends Acteur {
 
                 // Check en vertical
                 Case caseScannee = this.getGrille().getCase(x, y);
-
-
+                
                 if (caseScannee.getObjets().size() < 1)
                     continue;
 
+
                 if (caseScannee.getObjets().get(0).getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur())
                     nbAlignementY += 1;
-                else
+                else {
                     nbAlignementY = 0;
+                    pionsACapturer.add(caseScannee.getObjets().get(0) );
+                }
+
+
             }
 
             if(nbAlignementY == 5) {
@@ -288,74 +467,207 @@ public class Plateau extends Acteur {
         return false;
     }
 
+    public void detecterCaptureVerticale(Case casePlacement, Pion pion){
+
+        LinkedList<Acteur> candidats = new LinkedList<>();
+
+        // Capture verticale
+
+        for (int y = Math.max(casePlacement.getPosition().getY() - 3,0); y < casePlacement.getPosition().getY() + 4; y++){
+
+
+            if( y == casePlacement.getPosition().getY() || y ==  casePlacement.getPosition().getY() + 3){
+
+                // Contient le premier pion ajouté
+                Acteur debut = candidats.pollFirst();
+
+                // Si premier pion n'est pas null et est de la même couleur que le joueur actuel
+                if(debut != null && debut.getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur() ){
+
+                    ArrayList<Acteur> aEnlever = new ArrayList<>();
+
+                    // On dequeue mes candidats et on vérifie qu'ils ne sont pas de la même couleur que le joueur actuel
+                    while(!candidats.isEmpty()){
+                        Acteur act = candidats.poll();
+                        if(act.getComposant(ColorableComposant.class).getCouleur() != Jeu.getInstance().getJoueurActuel().getCouleur())
+                            aEnlever.add(act);
+                    }
+
+
+                    // Enfin on supprime les pions si capture valide en Y
+                    if(aEnlever.size() == 2) {
+                        Jeu.getInstance().getJoueurActuel().setNbrCapture(Jeu.getInstance().getJoueurActuel().getNbrCapture() + 1);
+
+                        aEnlever.forEach(p -> {
+                            Jeu.getInstance().getDerniersPionsSupprimes().put(p, p.getComposant(PosableComposant.class).getPosition());
+
+                            Jeu.getInstance().getJoueursQueue().peek().getPions().remove(p);
+
+                            this.getGrille().supprimer(
+                                    p.getComposant(PosableComposant.class).getPosition(),
+                                    p
+                            );
+                            Jeu.getInstance().getFenetre().supprimer(p.getDessins().get(0));
+
+                        });
+                    }
+
+                }
+
+                candidats = new LinkedList<>();
+                candidats.add(pion);
+                continue;
+            }
+
+            try {
+                candidats.add(this.getGrille().getCase(casePlacement.getPosition().getX(), y).getObjets().get(0));
+            } catch(IndexOutOfBoundsException ex){
+                // Si rien dans la case
+
+                if(y < casePlacement.getPosition().getY())
+                    y = casePlacement.getPosition().getY() - 1;
+                else
+                    y = casePlacement.getPosition().getY() + 3;
+            }
+
+
+        }
+    }
+
+    public void detecterCaptureHorizontale(Case casePlacement, Pion pion){
+
+        LinkedList<Acteur> candidats = new LinkedList<>();
+
+        // Capture horizontale
+
+
+        for (int x = Math.max(casePlacement.getPosition().getX() - 3, 0); x < casePlacement.getPosition().getX() + 4; x++){
+
+
+            // Si x est la case placement ou une case en bout de ligne alors capturer
+            if( x == casePlacement.getPosition().getX() || x ==  casePlacement.getPosition().getX() + 3){
+
+                // Contient le premier pion ajouté
+                Acteur debut = candidats.pollFirst();
+
+                // Si premier pion n'est pas null et est de la même couleur que le joueur actuel
+                if(debut != null && debut.getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur() ){
+
+                    ArrayList<Acteur> aEnlever = new ArrayList<>();
+
+                    // On dequeue mes candidats et on vérifie qu'ils ne sont pas de la même couleur que le joueur actuel
+                    while(!candidats.isEmpty()){
+                        Acteur act = candidats.poll();
+                        if(act.getComposant(ColorableComposant.class).getCouleur() != Jeu.getInstance().getJoueurActuel().getCouleur())
+                            aEnlever.add(act);
+                    }
+
+
+                    // Enfin on supprime les pions si capture valide en Y
+                    if(aEnlever.size() == 2) {
+                        Jeu.getInstance().getJoueurActuel().setNbrCapture(Jeu.getInstance().getJoueurActuel().getNbrCapture() + 1);
+                        int finalX = x;
+                        aEnlever.forEach(p -> {
+                            Jeu.getInstance().getDerniersPionsSupprimes().put(p, p.getComposant(PosableComposant.class).getPosition());
+
+                            Jeu.getInstance().getJoueursQueue().peek().getPions().remove(p);
+
+                            this.getGrille().supprimer(
+                                    p.getComposant(PosableComposant.class).getPosition(),
+                                    p
+                            );
+                            Jeu.getInstance().getFenetre().supprimer(p.getDessins().get(0));
+
+                        });
+                    }
+
+                }
+
+                candidats = new LinkedList<>();
+                candidats.add(pion);
+                continue;
+            }
+
+            try {
+                candidats.add(this.getGrille().getCase(x, casePlacement.getPosition().getY()).getObjets().get(0));
+            } catch(IndexOutOfBoundsException ex){
+                // Si rien dans la case
+
+                if(x < casePlacement.getPosition().getX())
+                    x = casePlacement.getPosition().getX() - 1;
+                else
+                    x = casePlacement.getPosition().getX() + 3;
+            }
+
+
+        }
+    }
 
     private boolean getVictoireDiagonale(Case casePlacement){
         int nbDiagonaleDroite = 0;
-        for(int x = -5; x < 5; x++){
 
-            Case caseDiagonaleDroite = this.getGrille().getCase(
-                    Math.min(Math.max(casePlacement.getPosition().getX() + x, 0), this.getGrille().getMatrice().size() - 1),
-                    Math.min(Math.max(casePlacement.getPosition().getY() + x, 0), this.getGrille().getMatrice().get(0).size() - 1));
 
-            if(caseDiagonaleDroite.getObjets().size() < 1) continue;
+        int meilleurEnchainement = 0;
 
-            if (caseDiagonaleDroite.getObjets().get(0).getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur())
-                nbDiagonaleDroite += 1;
+        for(int i = -5; i < 6; i++){
+
+
+            try{
+                Case diagonaleGauche = getGrille().getCase(
+                        casePlacement.getPosition().getX() - i,
+                        casePlacement.getPosition().getY() + i
+                );
+
+                if(diagonaleGauche.getObjets().get(0).getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur())
+                    nbDiagonaleDroite += 1;
+                else
+                    nbDiagonaleDroite = 0;
+
+            } catch(IndexOutOfBoundsException ex){
+
+                meilleurEnchainement = Math.max(meilleurEnchainement, nbDiagonaleDroite);
+                nbDiagonaleDroite = 0;
+            }
 
         }
 
-        if(nbDiagonaleDroite == 5) {
-            System.out.println("Gagné en diagonale droite");
-
-            Jeu.getInstance().ajouterLog(
-                    String.format(
-                            "Le joueur %s %s a gagné grâce à un placement en diagonale ( droite )",
-                            Jeu.getInstance().getJoueurActuel().getNom(),
-                            Jeu.getInstance().getJoueurActuel().getPrenom()
-                    )
-            );
-
+        //System.out.println("diag gauche" + meilleurEnchainement);
+        if (meilleurEnchainement == 5)
             return true;
-        }
-        System.out.println("Diagonale droite : " + nbDiagonaleDroite);
+        else
+            meilleurEnchainement = 0;
 
-        int nbDiagonaleGauche = 0;
-        for(int x = -5; x < 5; x++){
+        for(int i = -5; i < 6; i++){
 
-            Case caseDiagonaleGauche = this.getGrille().getCase(
-                    Math.min(Math.max(casePlacement.getPosition().getX() - x, 0), this.getGrille().getMatrice().size() - 1),
-                    Math.min(Math.max(casePlacement.getPosition().getY() + x, 0), this.getGrille().getMatrice().get(0).size() - 1)
-            );
 
-            if(caseDiagonaleGauche.getObjets().size() < 1) continue;
+            try{
+                Case diagonaleDroite = getGrille().getCase(
+                        casePlacement.getPosition().getX() + i,
+                        casePlacement.getPosition().getY() + i
+                );
 
-            if (caseDiagonaleGauche.getObjets().get(0).getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur())
-                nbDiagonaleGauche += 1;
+                if(diagonaleDroite.getObjets().get(0).getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur())
+                    nbDiagonaleDroite += 1;
+                else
+                    nbDiagonaleDroite = 0;
 
-            //
-        }
+            } catch(IndexOutOfBoundsException ex){
 
-        if(nbDiagonaleGauche == 5) {
-            System.out.println("Gagné en diagonale gauche");
+                meilleurEnchainement = Math.max(meilleurEnchainement, nbDiagonaleDroite);
+                nbDiagonaleDroite = 0;
+            }
 
-            Jeu.getInstance().ajouterLog(
-                    String.format(
-                            "Le joueur %s %s a gagné grâce à un placement en diagonale ( gauche )",
-                            Jeu.getInstance().getJoueurActuel().getNom(),
-                            Jeu.getInstance().getJoueurActuel().getPrenom()
-                    )
-            );
-
-            return true;
         }
 
-        return false;
+        //System.out.println("diag droite" + meilleurEnchainement);
+
+        return meilleurEnchainement == 5;
     }
     public boolean getPartieEstGagnante(Case casePlacement){
 
-        System.out.println("Pion place à :" + casePlacement.getPosition().getX() + ", " + casePlacement.getPosition().getY());
-
-        return getVictoireHorizontaleVerticale(casePlacement) || getVictoireDiagonale(casePlacement);
+        return getVictoireHorizontaleVerticale(casePlacement) ||
+                getVictoireDiagonale(casePlacement) ||
+                Jeu.getInstance().getJoueurActuel().getNbrCapture() == 5;
     }
 
     @Override

@@ -44,7 +44,17 @@ public class Pente {
 
 
                 logsPanel.add(new JScrollPane(listeLogs) );
-                logsPanel.add(new JButton("ok"));
+
+                JButton btnFermer = new JButton("Fermer");
+
+                btnFermer.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        historiqueFrame.dispose();
+                    }
+                });
+
+                logsPanel.add(btnFermer);
 
                 historiqueFrame.add(logsPanel);
 
@@ -389,11 +399,6 @@ public class Pente {
 
                 scenePrincipale.ajouter(new Vecteur2<>(1, 0), joueursZoneTexte, Scene.Placement.MILIEU);
 
-
-
-
-                
-
                 validerBtn.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent actionEvent) {
@@ -437,8 +442,16 @@ public class Pente {
                             @Override
                             public void onPionPlaceListener(Case casePlacement, Pion pion) {
 
+                                Jeu.getInstance().getDerniersPionsSupprimes().clear();
                                 annulerCoup.setEnabled(true);
 
+                                plateau.detecterCaptureDiagonaleGauche(casePlacement);
+
+                                plateau.detecterCaptureDiagonaleDroite(casePlacement);
+
+                                plateau.detecterCaptureHorizontale(casePlacement, pion);
+
+                                plateau.detecterCaptureVerticale(casePlacement, pion);
 
                                 if(plateau.getPartieEstGagnante(casePlacement)){
                                     System.out.println("Partie gagnante");
@@ -458,8 +471,31 @@ public class Pente {
 
                                         annulerCoup.setEnabled(false);
 
-                                        plateau.getGrille().supprimer(casePlacement.getPosition(), pion);
+                                        //plateau.getGrille().supprimer(casePlacement.getPosition(), pion);
+
+                                        // Pion joué à supprimer
+                                        plateau.getGrille().supprimer(casePlacement.getPosition(), Jeu.getInstance().getDernierPionPlace());
+
+                                        Jeu.getInstance().getJoueursQueue().peek().getPions().remove(pion);
+
                                         fenetrePrincipale.supprimer(pion.getDessins().get(0));
+                                        // Pions à rajouter avant la capture
+                                        if(Jeu.getInstance().getDerniersPionsSupprimes().size() > 0) {
+                                            Jeu.getInstance().getJoueursQueue().peek().setNbrCapture(
+                                                    Jeu.getInstance().getJoueursQueue().peek().getNbrCapture() -
+                                                            (int) (Jeu.getInstance().getDerniersPionsSupprimes().keySet().size() / 2));
+
+
+                                            Jeu.getInstance().getDerniersPionsSupprimes().keySet().forEach(p -> Jeu.getInstance().getJoueurActuel().ajouterPion(p));
+                                        }
+                                        Jeu.getInstance().getDerniersPionsSupprimes().keySet().forEach(p -> {
+                                            plateau.getGrille().ajouter(Jeu.getInstance().getDerniersPionsSupprimes().get(p), p);
+                                            fenetrePrincipale.ajouter(p.getDessins().get(0));
+                                        });
+
+
+
+                                        //fenetrePrincipale.supprimer(pion.getDessins().get(0));
 
 
                                         joueurActuel.setTexte(String.format("Prochain Joueur : %s %s",
@@ -491,7 +527,7 @@ public class Pente {
                                         );
 
                                         nombreCapture.setTexte(
-                                                String.format("Nombre de caputre : %d",
+                                                String.format("Nombre de captures : %d",
                                                         Jeu.getInstance().getJoueurActuel().getNbrCapture()
                                                 )
                                         );
@@ -532,7 +568,7 @@ public class Pente {
                                                 );
 
                                 nombreCapture.setTexte(
-                                    String.format("Nombre de caputre : %d",
+                                    String.format("Nombre de captures : %d",
                                             Jeu.getInstance().getJoueurActuel().getNbrCapture()
                                             )
                                             );

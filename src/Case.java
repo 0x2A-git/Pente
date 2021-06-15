@@ -79,6 +79,13 @@ public class Case {
         return this.objets;
     }
 
+    public Acteur getObjet(int indice){
+        if(indice + 1 > this.objets.size())
+            return null;
+
+        return this.objets.get(indice);
+    }
+
     /**
      * Change la couleur de la case
      * @param couleur - Nouvelle couleur de la case
