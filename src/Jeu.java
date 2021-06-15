@@ -1,6 +1,5 @@
 import MG2D.Fenetre;
 import MG2D.geometrie.Dessin;
-import math.Vecteur2;
 
 import java.util.*;
 

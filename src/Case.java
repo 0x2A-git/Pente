@@ -1,5 +1,4 @@
 import MG2D.Couleur;
-import math.Vecteur2;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;

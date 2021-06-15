@@ -1,6 +1,3 @@
-import MG2D.Couleur;
-import math.Vecteur2;
-
 /**
  * Composant qui ajoute des méthodes pour la couleur d'un acteur
  */

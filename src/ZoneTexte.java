@@ -1,6 +1,5 @@
 import MG2D.geometrie.Dessin;
 import MG2D.geometrie.Texte;
-import math.Vecteur2;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;

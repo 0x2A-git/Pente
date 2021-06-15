@@ -1,9 +1,7 @@
 import MG2D.Couleur;
-import MG2D.Fenetre;
 import MG2D.geometrie.Dessin;
 import MG2D.geometrie.Ligne;
 import MG2D.geometrie.Point;
-import math.Vecteur2;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;

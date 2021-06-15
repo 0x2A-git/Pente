@@ -1,5 +1,4 @@
 import MG2D.Fenetre;
-import math.Vecteur2;
 
 /**
  * Représente la grille principale du logiciel c'est ici qu'on va placer les différents éléments

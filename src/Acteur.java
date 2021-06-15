@@ -1,5 +1,4 @@
 import MG2D.geometrie.Dessin;
-import math.Vecteur2;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;

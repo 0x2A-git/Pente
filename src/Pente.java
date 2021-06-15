@@ -1,6 +1,5 @@
 import MG2D.*;
 import MG2D.geometrie.Texte;
-import math.Vecteur2;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
