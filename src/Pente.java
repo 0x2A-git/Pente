@@ -30,7 +30,7 @@ public class Pente {
 
     public static void creerJeu(){
 
-        Fenetre fenetrePrincipale = new Fenetre("Test", 800, 600);
+        Fenetre fenetrePrincipale = new Fenetre("Jeu de pente", 800, 600);
 
         JMenuBar menuBar = new JMenuBar();
 
@@ -41,9 +41,12 @@ public class Pente {
 
 
         historique.addActionListener(__ -> {
-            System.out.println("Historique ouvert");
-            JDialog historiqueFrame = new JDialog(fenetrePrincipale, "Historique", true);
+            //System.out.println("Historique ouvert");
+            JDialog historiqueDialog = new JDialog(fenetrePrincipale, "Historique", true);
 
+            historiqueDialog.setLocationRelativeTo(fenetrePrincipale);
+
+            historiqueDialog.setLocation(historiqueDialog.getLocation());
 
             JPanel logsPanel = new JPanel();
 
@@ -60,17 +63,16 @@ public class Pente {
 
             JButton btnFermer = new JButton("Fermer");
 
-            btnFermer.addActionListener(___ -> historiqueFrame.dispose());
+            btnFermer.addActionListener(___ -> historiqueDialog.dispose());
 
             logsPanel.add(btnFermer);
 
-            historiqueFrame.add(logsPanel);
+            historiqueDialog.add(logsPanel);
 
-
-            historiqueFrame.pack();
-            historiqueFrame.getContentPane().validate();
-            historiqueFrame.getContentPane().repaint();
-            historiqueFrame.setVisible(true);
+            historiqueDialog.pack();
+            historiqueDialog.getContentPane().validate();
+            historiqueDialog.getContentPane().repaint();
+            historiqueDialog.setVisible(true);
         });
 
         menu.add(historique);
@@ -167,9 +169,11 @@ public class Pente {
         });
 
         // Dialogue des paramètres de la partie
-        JDialog parametresPartieFrame = new JDialog(fenetrePrincipale, "Paramètres de la partie", true);
+        JDialog parametresPartieDialog = new JDialog(fenetrePrincipale, "Paramètres de la partie", true);
 
-        parametresPartieFrame.addWindowListener(new WindowListener() {
+        parametresPartieDialog.setLocationRelativeTo(fenetrePrincipale);
+
+        parametresPartieDialog.addWindowListener(new WindowListener() {
             @Override
             public void windowOpened(WindowEvent windowEvent) {
 
@@ -213,6 +217,8 @@ public class Pente {
 
         parametresPartiePanel.add(nbJoueursLabel);
 
+        // Spinner initialement prévu pour accueillir plus de joueurs mais pas implémenté jusqu'au bout
+
         SpinnerNumberModel spinnerValue = new SpinnerNumberModel(
                 2, //initial value
                 2, //min
@@ -225,6 +231,8 @@ public class Pente {
                         spinnerValue
                 );
 
+        nbJoueursSpinner.setEnabled(false);
+
         parametresPartiePanel.add(nbJoueursSpinner);
 
         JButton demarrerBouton = new JButton("Démarrer");
@@ -235,10 +243,10 @@ public class Pente {
 
         demarrerBouton.addActionListener(__ -> {
 
-            parametresPartieFrame.setTitle("Ajouter les joueurs");
+            parametresPartieDialog.setTitle("Ajouter les joueurs");
             JPanel creationJoueurPanel = new JPanel();
 
-            // Menu des couleurs
+            // Menu des couleurs (mappage des strings, avec les enum)
             HashMap<String, Couleur> couleursDisponibles = new HashMap<>(Map.ofEntries(
                     Map.entry(" ", Couleur.NOIR),
                     Map.entry("Jaune", Couleur.JAUNE),
@@ -332,7 +340,7 @@ public class Pente {
                     @Override
                     public void insertUpdate(DocumentEvent documentEvent) {
                         joueur.setNom(nomJoueur.getText());
-                        System.out.println("Nouveau nom :" + joueur.getNom());
+                        //System.out.println("Nouveau nom :" + joueur.getNom());
                     }
 
                     @Override
@@ -357,7 +365,7 @@ public class Pente {
                     @Override
                     public void insertUpdate(DocumentEvent documentEvent) {
                         joueur.setPrenom(prenomJoueur.getText());
-                        System.out.println("Nouveau prénom : " + prenomJoueur.getText());
+                        //System.out.println("Nouveau prénom : " + prenomJoueur.getText());
                     }
 
                     @Override
@@ -398,7 +406,7 @@ public class Pente {
 
             scenePrincipale.ajouter(new Vecteur2<>(1, 0), joueursZoneTexte, Scene.Placement.MILIEU);
 
-            // Callback boutn valider
+            // Callback bouton valider
             validerBtn.addActionListener(___ -> {
 
                 validerBtn.setEnabled(false);
@@ -416,7 +424,7 @@ public class Pente {
 
 
 
-                parametresPartieFrame.dispose();
+                parametresPartieDialog.dispose();
 
                 Jeu.getInstance().setJoueurActuel(Jeu.getInstance().getJoueursQueue().poll());
 
@@ -450,10 +458,12 @@ public class Pente {
                     plateau.detecterCaptureVerticale(casePlacement, pion);
 
                     if(plateau.getPartieEstGagnante(casePlacement)){
-                        System.out.println("Partie gagnante");
+                        //System.out.println("Partie gagnante");
 
 
                         JDialog victoireDialog = new JDialog(fenetrePrincipale, "Victoire", true);
+
+                        victoireDialog.setLocationRelativeTo(fenetrePrincipale);
 
                         JPanel victoirePanel = new JPanel();
                         victoirePanel.setLayout(new BoxLayout(victoirePanel, BoxLayout.Y_AXIS));
@@ -461,6 +471,8 @@ public class Pente {
                                 Jeu.getInstance().getJoueurActuel().getNom(),
                                 Jeu.getInstance().getJoueurActuel().getPrenom())
                         ));
+
+
 
                         JButton recommencerBtn = new JButton("Recommencer la partie");
 
@@ -611,12 +623,12 @@ public class Pente {
             contrainteGrille.gridwidth = spinnerValue.getNumber().intValue();
             creationJoueurPanel.add(validerBtn, contrainteGrille);
 
-            parametresPartieFrame.getContentPane().removeAll();
+            parametresPartieDialog.getContentPane().removeAll();
 
-            parametresPartieFrame.getContentPane().add(creationJoueurPanel);
+            parametresPartieDialog.getContentPane().add(creationJoueurPanel);
 
 
-            parametresPartieFrame.pack();
+            parametresPartieDialog.pack();
 
         });
 
@@ -624,9 +636,9 @@ public class Pente {
         fenetrePrincipale.rafraichir();
         fenetrePrincipale.repaint();
         fenetrePrincipale.revalidate();
-        parametresPartieFrame.getContentPane().add(parametresPartiePanel);
-        parametresPartieFrame.pack();
-        parametresPartieFrame.setVisible(true);
+        parametresPartieDialog.getContentPane().add(parametresPartiePanel);
+        parametresPartieDialog.pack();
+        parametresPartieDialog.setVisible(true);
 
 
 

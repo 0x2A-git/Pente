@@ -1,7 +1,23 @@
+Le jeu est compilable sur Linux ( tests ok )
+
 # Compilation
+
+Linux
+
+Ouvrir la console, se rendre dans le dossier src du projet et taper :
 
 javac -classpath ".:../libs/MG2D.jar" *.java
 
+Windows
+
+javac -classpath ".:[CHEMIN ABSOLU VERS libs/MG2D.jar]" *.java
+
 # Execution
 
+Dans le dossier src du projet taper :
+
 java -classpath ".:../libs/MG2D.jar" Pente
+
+Windows
+
+javac -classpath ".:[CHEMIN ABSOLU VERS libs/MG2D.jar]" *.java

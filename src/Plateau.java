@@ -306,6 +306,15 @@ public class Plateau extends Acteur {
 
                         // Enfin on supprime les pions si capture valide en Y
                         if(aEnlever.size() == 2) {
+
+                            Jeu.getInstance().ajouterLog(
+                                    String.format("Joueur %s %s a capturé des pions en diagonale droite à %s %s",
+                                            Jeu.getInstance().getJoueurActuel().getNom(),
+                                            Jeu.getInstance().getJoueurActuel().getPrenom(),
+                                            Jeu.getInstance().getJoueursQueue().peek().getNom(),
+                                            Jeu.getInstance().getJoueursQueue().peek().getPrenom())
+                            );
+
                             Jeu.getInstance().getJoueurActuel().setNbrCapture(Jeu.getInstance().getJoueurActuel().getNbrCapture() + 1);
                             aEnlever.forEach(p -> {
                                 Jeu.getInstance().getDerniersPionsSupprimes().put(p, p.getComposant(PosableComposant.class).getPosition());
@@ -392,6 +401,15 @@ public class Plateau extends Acteur {
 
                         // Enfin on supprime les pions si capture valide en Y
                         if(aEnlever.size() == 2) {
+
+                            Jeu.getInstance().ajouterLog(
+                                    String.format("Joueur %s %s a capturé des pions en diagonale gauche à %s %s",
+                                            Jeu.getInstance().getJoueurActuel().getNom(),
+                                            Jeu.getInstance().getJoueurActuel().getPrenom(),
+                                            Jeu.getInstance().getJoueursQueue().peek().getNom(),
+                                            Jeu.getInstance().getJoueursQueue().peek().getPrenom())
+                            );
+
                             Jeu.getInstance().getJoueurActuel().setNbrCapture(Jeu.getInstance().getJoueurActuel().getNbrCapture() + 1);
                             aEnlever.forEach(p -> {
                                 Jeu.getInstance().getDerniersPionsSupprimes().put(p, p.getComposant(PosableComposant.class).getPosition());
@@ -482,6 +500,15 @@ public class Plateau extends Acteur {
 
                         // Enfin on supprime les pions si capture valide en Y
                         if(aEnlever.size() == 2) {
+
+                            Jeu.getInstance().ajouterLog(
+                                    String.format("Joueur %s %s a capturé des pions en vertical à %s %s",
+                                            Jeu.getInstance().getJoueurActuel().getNom(),
+                                            Jeu.getInstance().getJoueurActuel().getPrenom(),
+                                            Jeu.getInstance().getJoueursQueue().peek().getNom(),
+                                            Jeu.getInstance().getJoueursQueue().peek().getPrenom())
+                            );
+
                             Jeu.getInstance().getJoueurActuel().setNbrCapture(Jeu.getInstance().getJoueurActuel().getNbrCapture() + 1);
                             aEnlever.forEach(p -> {
                                 Jeu.getInstance().getDerniersPionsSupprimes().put(p, p.getComposant(PosableComposant.class).getPosition());
@@ -572,6 +599,15 @@ public class Plateau extends Acteur {
 
                         // Enfin on supprime les pions si capture valide en Y
                         if(aEnlever.size() == 2) {
+
+                            Jeu.getInstance().ajouterLog(
+                                    String.format("Joueur %s %s a capturé des pions en horizontal à %s %s",
+                                            Jeu.getInstance().getJoueurActuel().getNom(),
+                                            Jeu.getInstance().getJoueurActuel().getPrenom(),
+                                            Jeu.getInstance().getJoueursQueue().peek().getNom(),
+                                            Jeu.getInstance().getJoueursQueue().peek().getPrenom())
+                            );
+
                             Jeu.getInstance().getJoueurActuel().setNbrCapture(Jeu.getInstance().getJoueurActuel().getNbrCapture() + 1);
                             aEnlever.forEach(p -> {
                                 Jeu.getInstance().getDerniersPionsSupprimes().put(p, p.getComposant(PosableComposant.class).getPosition());
@@ -704,7 +740,31 @@ public class Plateau extends Acteur {
 
         int meilleurEnchainement = 0;
 
-        for(int i = -5; i < 6; i++){
+
+        // Check victoire diagonale gauche
+        for(int i = -4; i < 6; i++){
+
+
+            try{
+                Case diagonaleGauche = getGrille().getCase(
+                        casePlacement.getPosition().getX() - i,
+                        casePlacement.getPosition().getY() + i
+                );
+
+                if(diagonaleGauche.getObjets().get(0).getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur())
+                    nbDiagonaleDroite += 1;
+                else
+                    nbDiagonaleDroite = 0;
+
+            } catch(IndexOutOfBoundsException ex){
+
+                meilleurEnchainement = Math.max(meilleurEnchainement, nbDiagonaleDroite);
+                nbDiagonaleDroite = 0;
+            }
+
+        }
+
+        for(int i = 6; i > -4; i--){
 
 
             try{
@@ -732,7 +792,31 @@ public class Plateau extends Acteur {
         else
             meilleurEnchainement = 0;
 
-        for(int i = -5; i < 6; i++){
+        // Check diagonale droite
+
+        for(int i = -4; i < 6; i++){
+
+
+            try{
+                Case diagonaleDroite = getGrille().getCase(
+                        casePlacement.getPosition().getX() + i,
+                        casePlacement.getPosition().getY() + i
+                );
+
+                if(diagonaleDroite.getObjets().get(0).getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur())
+                    nbDiagonaleDroite += 1;
+                else
+                    nbDiagonaleDroite = 0;
+
+            } catch(IndexOutOfBoundsException ex){
+
+                meilleurEnchainement = Math.max(meilleurEnchainement, nbDiagonaleDroite);
+                nbDiagonaleDroite = 0;
+            }
+
+        }
+
+        for(int i = 6; i > -4; i--){
 
 
             try{
