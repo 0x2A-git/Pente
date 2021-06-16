@@ -2,14 +2,22 @@ import MG2D.Couleur;
 import MG2D.geometrie.Cercle;
 import MG2D.geometrie.Dessin;
 import MG2D.geometrie.Point;
-import math.Vecteur2;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-
 /**
  * Représente le pion qui peut être placé dans le jeu de la pente
+ *
+ * Auteurs :
+ *
+ * BERNARD Manon
+ * BOURRE Maxime
+ * BUTELLE Dorine
+ * VASSEUR Maxence
+ * DELSART Eloise
+ * MARTIN Lucas
+ *
  * */
 
 
@@ -50,6 +58,10 @@ public  class Pion extends Acteur {
     }
 
 
+    /**
+     * Dessine le pion
+     * @return - Retourne les dessins du pion
+     */
     @Override
     public ArrayList<Dessin> dessiner() {
         //System.out.println("Pion :" + position.getX() + ", " + position.getY());
@@ -64,10 +76,7 @@ public  class Pion extends Acteur {
         return dessins;
     }
 
-    @Override
-    public void mettreAJours() {
 
-    }
 
     @Override
     public void onPreAjout(Case caseActuelle) {
@@ -81,18 +90,4 @@ public  class Pion extends Acteur {
 
     }
 
-    @Override
-    public void onMisAJour() {
-
-    }
-
-    @Override
-    public void onSupprime() {
-
-    }
-
-    @Override
-    public void onDessine() {
-
-    }
 }

@@ -1,0 +1,7 @@
+# Compilation
+
+javac -classpath ".:../libs/MG2D.jar" *.java
+
+# Execution
+
+java -classpath ".:../libs/MG2D.jar" Pente

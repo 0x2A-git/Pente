@@ -1,20 +1,37 @@
-package math;
-
 import java.util.Objects;
 
 /**
  * Implémentation générique du vecteur 2D
+ *
+ * Auteurs :
+ *
+ * BERNARD Manon
+ * BOURRE Maxime
+ * BUTELLE Dorine
+ * VASSEUR Maxence
+ * DELSART Eloise
+ * MARTIN Lucas
  * */
 
 public class Vecteur2<T extends Number> {
     private T x;
     private T y;
 
+
+    /**
+     * Constructeur
+     * @param x - Coordonnée X
+     * @param y - Coordonnée Y
+     */
     public Vecteur2(T x, T y){
         this.x = x;
         this.y = y;
     }
 
+    /**
+     * Constructeur par copie
+     * @param that
+     */
     public Vecteur2(Vecteur2<T> that){
         this.x = that.x;
         this.y = that.y;
@@ -45,14 +62,22 @@ public class Vecteur2<T extends Number> {
         this.y = nouveauY;
     }
 
-    /***/
+    /**
+     * Getter Y
+     * @return - Retourne la coordonnée Y
+     */
     public T getY(){
         return this.y;
     }
 
-    public double getDistance(){
-        return Math.sqrt( Math.pow(this.x.longValue(), 2) + Math.pow(this.y.longValue(), 2) );
-    }
+    /**
+     * Equals
+     *
+     * Permet de faire un equals en fonction des attributes X et Y
+     *
+     * @param o - autre vecteur
+     * @return - Si le vecteur est identique retourne vrai sinon faux
+     */
 
     @Override
     public boolean equals(Object o) {
@@ -62,6 +87,12 @@ public class Vecteur2<T extends Number> {
         return Objects.equals(x, vecteur2.x) && Objects.equals(y, vecteur2.y);
     }
 
+    /**
+     * HashCode
+     *
+     * Implémentation du hashcode en fonction de X et Y
+     * @return - HashCode de l'objet
+     */
     @Override
     public int hashCode() {
         return Objects.hash(x, y);

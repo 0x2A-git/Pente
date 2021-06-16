@@ -1,9 +1,17 @@
 import MG2D.Fenetre;
-import math.Vecteur2;
 
 /**
  * Représente la grille principale du logiciel c'est ici qu'on va placer les différents éléments
  * Sa spécialité est de cacher la grille, car la classe va gérer elle-même la grille
+ *
+ * Auteurs :
+ *
+ * BERNARD Manon
+ * BOURRE Maxime
+ * BUTELLE Dorine
+ * VASSEUR Maxence
+ * DELSART Eloise
+ * MARTIN Lucas
  * */
 
 public class Scene {

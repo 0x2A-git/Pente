@@ -1,6 +1,5 @@
 import MG2D.Couleur;
 import MG2D.geometrie.*;
-import math.Vecteur2;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -10,6 +9,15 @@ import java.util.Vector;
  * Classe à utiliser pour tout ajout de nouveaux éléments dans la fenêtre.
  *
  * La grille permet de rendre responsive les éléments à l'intérieur de la fenêtre.
+ *
+ * Auteurs :
+ *
+ * BERNARD Manon
+ * BOURRE Maxime
+ * BUTELLE Dorine
+ * VASSEUR Maxence
+ * DELSART Eloise
+ * MARTIN Lucas
  *
  * */
 
@@ -268,6 +276,7 @@ public class Grille implements Case.Callbacks {
 
         ArrayList<Dessin> d = new ArrayList<>();
 
+        /*
         for(int x = 0; x < this.matrice.size(); x++){
             for(int y = 0; y < this.matrice.get(x).size(); y++){
 
@@ -313,7 +322,7 @@ public class Grille implements Case.Callbacks {
                 d.add(l);
 
 
-                /*
+
                     Rectangle r = new Rectangle(
                             caseActuelle.getCouleurFond(),
                             s1,
@@ -321,9 +330,9 @@ public class Grille implements Case.Callbacks {
                     );
 
                     r.setPlein(true);
-                    //fenetre.ajouter(r);*/
+                    //fenetre.ajouter(r);
             }
-        }
+        }*/
 
         return d;
     }
