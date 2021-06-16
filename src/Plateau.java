@@ -740,7 +740,31 @@ public class Plateau extends Acteur {
 
         int meilleurEnchainement = 0;
 
-        for(int i = -5; i < 6; i++){
+
+        // Check victoire diagonale gauche
+        for(int i = -4; i < 6; i++){
+
+
+            try{
+                Case diagonaleGauche = getGrille().getCase(
+                        casePlacement.getPosition().getX() - i,
+                        casePlacement.getPosition().getY() + i
+                );
+
+                if(diagonaleGauche.getObjets().get(0).getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur())
+                    nbDiagonaleDroite += 1;
+                else
+                    nbDiagonaleDroite = 0;
+
+            } catch(IndexOutOfBoundsException ex){
+
+                meilleurEnchainement = Math.max(meilleurEnchainement, nbDiagonaleDroite);
+                nbDiagonaleDroite = 0;
+            }
+
+        }
+
+        for(int i = 6; i > -4; i--){
 
 
             try{
@@ -768,7 +792,31 @@ public class Plateau extends Acteur {
         else
             meilleurEnchainement = 0;
 
-        for(int i = -5; i < 6; i++){
+        // Check diagonale droite
+
+        for(int i = -4; i < 6; i++){
+
+
+            try{
+                Case diagonaleDroite = getGrille().getCase(
+                        casePlacement.getPosition().getX() + i,
+                        casePlacement.getPosition().getY() + i
+                );
+
+                if(diagonaleDroite.getObjets().get(0).getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur())
+                    nbDiagonaleDroite += 1;
+                else
+                    nbDiagonaleDroite = 0;
+
+            } catch(IndexOutOfBoundsException ex){
+
+                meilleurEnchainement = Math.max(meilleurEnchainement, nbDiagonaleDroite);
+                nbDiagonaleDroite = 0;
+            }
+
+        }
+
+        for(int i = 6; i > -4; i--){
 
 
             try{
