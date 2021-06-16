@@ -18,7 +18,7 @@ import java.util.HashMap;
 public abstract class Acteur {
 
     // Va stocker les composants de l'acteur
-    protected HashMap< String, Composant<? extends Composant.Callbacks> > composants = new HashMap();
+    protected HashMap< String, Composant<? extends Composant.Callbacks> > composants = new HashMap<>();
 
     protected Vecteur2<Integer> position;
 

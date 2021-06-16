@@ -5,7 +5,17 @@ import java.lang.reflect.InvocationTargetException;
  *
  * Permet d'avoir une modularité au niveau des acteurs
  * @param <T> - Type de composant
- */
+ *
+ * Auteurs :
+ *
+ * BERNARD Manon
+ * BOURRE Maxime
+ * BUTELLE Dorine
+ * VASSEUR Maxence
+ * DELSART Eloise
+ * MARTIN Lucas
+ *
+ * */
 
 public class Composant<T> {
 
@@ -16,6 +26,9 @@ public class Composant<T> {
 
     private T composant;
 
+    /**
+     * Constructeur Composant
+     * */
 
     public Composant(Class<T> composant) {
 
@@ -32,6 +45,10 @@ public class Composant<T> {
         }
     }
 
+    /**
+     * Getter Composant
+     * @return - Retourne le composant casté
+     */
     public T get(){
         return this.composant;
     }

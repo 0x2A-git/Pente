@@ -8,6 +8,19 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+/**
+ * Classe principale du jeu
+ *
+ * Auteurs :
+ *
+ * BERNARD Manon
+ * BOURRE Maxime
+ * BUTELLE Dorine
+ * VASSEUR Maxence
+ * DELSART Eloise
+ * MARTIN Lucas
+ *
+ * */
 
 public class Pente {
 
@@ -62,7 +75,7 @@ public class Pente {
 
         menu.add(historique);
 
-        // Coup
+        // Bouton annuler coup
 
         JMenuItem annulerCoup = new JMenuItem("Annuler dernier coup");
 
@@ -75,6 +88,7 @@ public class Pente {
         Jeu jeu = Jeu.getInstance();
 
 
+        // Création scène du jeu
         Scene scenePrincipale = new Scene(
                 fenetrePrincipale,
                 new Grille(
@@ -110,13 +124,6 @@ public class Pente {
 
         Clavier clavier = fenetrePrincipale.getClavier();
         fenetrePrincipale.addKeyListener(clavier);
-
-
-        scenePrincipale.getGrille().addOnCaseCliqueeCallback(new Grille.OnCaseCliqueeListener() {
-            @Override
-            public void onCliquee(Case caseCliquee) {
-            }
-        });
 
         // Attache un callback lorsque clique gauche sur la fenêtre ( via awt )
         fenetrePrincipale.addMouseListener(new MouseListener() {
@@ -391,6 +398,7 @@ public class Pente {
 
             scenePrincipale.ajouter(new Vecteur2<>(1, 0), joueursZoneTexte, Scene.Placement.MILIEU);
 
+            // Callback boutn valider
             validerBtn.addActionListener(___ -> {
 
                 validerBtn.setEnabled(false);
@@ -428,169 +436,169 @@ public class Pente {
 
                 scenePrincipale.ajouter(new Vecteur2<>(3, 0), joueurZoneTexte, Scene.Placement.MILIEU);
 
-                plateau.ajouterOnPionPlaceListerner(new Plateau.OnPionPlaceListener() {
-                    @Override
-                    public void onPionPlaceListener(Case casePlacement, Pion pion) {
+                plateau.ajouterOnPionPlaceListerner((casePlacement, pion) -> {
 
-                        Jeu.getInstance().getDerniersPionsSupprimes().clear();
-                        annulerCoup.setEnabled(true);
+                    Jeu.getInstance().getDerniersPionsSupprimes().clear();
+                    annulerCoup.setEnabled(true);
 
-                        plateau.detecterCaptureDiagonaleGauche(casePlacement);
+                    plateau.detecterCaptureDiagonaleGauche(casePlacement);
 
-                        plateau.detecterCaptureDiagonaleDroite(casePlacement);
+                    plateau.detecterCaptureDiagonaleDroite(casePlacement);
 
-                        plateau.detecterCaptureHorizontale(casePlacement, pion);
+                    plateau.detecterCaptureHorizontale(casePlacement, pion);
 
-                        plateau.detecterCaptureVerticale(casePlacement, pion);
+                    plateau.detecterCaptureVerticale(casePlacement, pion);
 
-                        if(plateau.getPartieEstGagnante(casePlacement)){
-                            System.out.println("Partie gagnante");
+                    if(plateau.getPartieEstGagnante(casePlacement)){
+                        System.out.println("Partie gagnante");
 
 
-                            JDialog victoireDialog = new JDialog(fenetrePrincipale, "Victoire", true);
+                        JDialog victoireDialog = new JDialog(fenetrePrincipale, "Victoire", true);
 
-                            JPanel victoirePanel = new JPanel();
-                            victoirePanel.setLayout(new BoxLayout(victoirePanel, BoxLayout.Y_AXIS));
-                            victoirePanel.add(new JLabel(String.format("Victoire ! %s a gagné !", Jeu.getInstance().getJoueurActuel())));
+                        JPanel victoirePanel = new JPanel();
+                        victoirePanel.setLayout(new BoxLayout(victoirePanel, BoxLayout.Y_AXIS));
+                        victoirePanel.add(new JLabel(String.format("Victoire ! %s %s a gagné !",
+                                Jeu.getInstance().getJoueurActuel().getNom(),
+                                Jeu.getInstance().getJoueurActuel().getPrenom())
+                        ));
 
-                            JButton recommencerBtn = new JButton("Recommencer la partie");
+                        JButton recommencerBtn = new JButton("Recommencer la partie");
 
-                            recommencerBtn.addActionListener(__ -> {
-                                fenetrePrincipale.dispose();
-                                creerJeu();
-                            });
-
-                            victoirePanel.add(recommencerBtn);
-
-                            JButton quitterBtn = new JButton("Quitter");
-
-                            quitterBtn.addActionListener(__ -> fenetrePrincipale.dispose());
-
-                            victoirePanel.add(quitterBtn);
-
-                            victoireDialog.add(victoirePanel);
-                            victoireDialog.pack();
-                            victoireDialog.getContentPane().validate();
-                            victoireDialog.getContentPane().repaint();
-                            victoireDialog.setVisible(true);
-                        }
-
-                        Jeu.getInstance().getJoueurActuel().ajouterPion(pion);
-                        Jeu.getInstance().setDernierPionPlace(pion);
-
-                        // Enlève callback précédent si existant
-                        if(annulerCoup.getActionListeners().length > 0 )
-                            annulerCoup.removeActionListener(annulerCoup.getActionListeners()[0]);
-
-                        // Ajoute un callback pour supprimer le pion du plateau
-                        annulerCoup.addActionListener(__ -> {
-
-                            annulerCoup.setEnabled(false);
-
-                            //plateau.getGrille().supprimer(casePlacement.getPosition(), pion);
-
-                            // Pion joué à supprimer
-                            plateau.getGrille().supprimer(casePlacement.getPosition(), Jeu.getInstance().getDernierPionPlace());
-
-                            Jeu.getInstance().getJoueursQueue().peek().getPions().remove(pion);
-
-                            fenetrePrincipale.supprimer(pion.getDessins().get(0));
-                            // Pions à rajouter avant la capture
-                            if(Jeu.getInstance().getDerniersPionsSupprimes().size() > 0) {
-                                Jeu.getInstance().getJoueursQueue().peek().setNbrCapture(
-                                        Jeu.getInstance().getJoueursQueue().peek().getNbrCapture() -
-                                                (int) (Jeu.getInstance().getDerniersPionsSupprimes().keySet().size() / 2));
-
-
-                                Jeu.getInstance().getDerniersPionsSupprimes().keySet().forEach(p -> Jeu.getInstance().getJoueurActuel().ajouterPion(p));
-                            }
-                            Jeu.getInstance().getDerniersPionsSupprimes().keySet().forEach(p -> {
-                                plateau.getGrille().ajouter(Jeu.getInstance().getDerniersPionsSupprimes().get(p), p);
-                                fenetrePrincipale.ajouter(p.getDessins().get(0));
-                            });
-
-
-
-                            //fenetrePrincipale.supprimer(pion.getDessins().get(0));
-
-
-                            joueurActuel.setTexte(String.format("Prochain Joueur : %s %s",
-                                    Jeu.getInstance().getJoueurActuel().getNom(),
-                                    Jeu.getInstance().getJoueurActuel().getPrenom()
-                                    )
-                            );
-
-                            // Màj de l'interface
-
-
-
-                            joueurSuivant.setTexte(String.format("Joueur Actuel : %s %s",
-                                    Jeu.getInstance().getJoueursQueue().peek().getNom(),
-                                    Jeu.getInstance().getJoueursQueue().peek().getPrenom()
-                                    )
-                            );
-
-                            Jeu.getInstance().getJoueursQueue().add(Jeu.getInstance().getJoueurActuel());
-
-                            Jeu.getInstance().setJoueurActuel(Jeu.getInstance().getJoueursQueue().poll());
-
-
-
-                            pionsJoueurActuel.setTexte(
-                                    String.format("Pions du joueur actuel : %d",
-                                            Jeu.getInstance().getJoueurActuel().getNbrPions()
-                                    )
-                            );
-
-                            nombreCapture.setTexte(
-                                    String.format("Nombre de captures : %d",
-                                            Jeu.getInstance().getJoueurActuel().getNbrCapture()
-                                    )
-                            );
-                            plateau.dessiner();
-                            fenetrePrincipale.rafraichir();
-
+                        recommencerBtn.addActionListener(__1 -> {
+                            fenetrePrincipale.dispose();
+                            creerJeu();
                         });
 
-                        Jeu.getInstance().ajouterLog(
-                                String.format(
-                                        "Le joueur %s %s a placé un pion en %d, %d",
-                                        Jeu.getInstance().getJoueurActuel().getNom(),
-                                        Jeu.getInstance().getJoueurActuel().getPrenom(),
-                                        casePlacement.getPosition().getX(),
-                                        casePlacement.getPosition().getY()
-                                        )
-                        );
+                        victoirePanel.add(recommencerBtn);
 
-                        // Màj de l'interface
+                        JButton quitterBtn = new JButton("Quitter");
+
+                        quitterBtn.addActionListener(__1 -> fenetrePrincipale.dispose());
+
+                        victoirePanel.add(quitterBtn);
+
+                        victoireDialog.add(victoirePanel);
+                        victoireDialog.pack();
+                        victoireDialog.getContentPane().validate();
+                        victoireDialog.getContentPane().repaint();
+                        victoireDialog.setVisible(true);
+                    }
+
+                    Jeu.getInstance().getJoueurActuel().ajouterPion(pion);
+                    Jeu.getInstance().setDernierPionPlace(pion);
+
+                    // Enlève callback précédent si existant
+                    if(annulerCoup.getActionListeners().length > 0 )
+                        annulerCoup.removeActionListener(annulerCoup.getActionListeners()[0]);
+
+                    // Ajoute un callback pour supprimer le pion du plateau
+                    annulerCoup.addActionListener(__1 -> {
+
+                        annulerCoup.setEnabled(false);
+
+                        //plateau.getGrille().supprimer(casePlacement.getPosition(), pion);
+
+                        // Pion joué à supprimer
+                        plateau.getGrille().supprimer(casePlacement.getPosition(), Jeu.getInstance().getDernierPionPlace());
+
+                        Jeu.getInstance().getJoueursQueue().peek().getPions().remove(pion);
+
+                        fenetrePrincipale.supprimer(pion.getDessins().get(0));
+                        // Pions à rajouter avant la capture
+                        if(Jeu.getInstance().getDerniersPionsSupprimes().size() > 0) {
+                            Jeu.getInstance().getJoueursQueue().peek().setNbrCapture(
+                                    Jeu.getInstance().getJoueursQueue().peek().getNbrCapture() -
+                                            (int) (Jeu.getInstance().getDerniersPionsSupprimes().keySet().size() / 2));
+
+
+                            Jeu.getInstance().getDerniersPionsSupprimes().keySet().forEach(p -> Jeu.getInstance().getJoueurActuel().ajouterPion(p));
+                        }
+                        Jeu.getInstance().getDerniersPionsSupprimes().keySet().forEach(p -> {
+                            plateau.getGrille().ajouter(Jeu.getInstance().getDerniersPionsSupprimes().get(p), p);
+                            fenetrePrincipale.ajouter(p.getDessins().get(0));
+                        });
+
+
+
+                        //fenetrePrincipale.supprimer(pion.getDessins().get(0));
+
 
                         joueurActuel.setTexte(String.format("Prochain Joueur : %s %s",
                                 Jeu.getInstance().getJoueurActuel().getNom(),
                                 Jeu.getInstance().getJoueurActuel().getPrenom()
                                 )
-                                );
+                        );
+
+                        // Màj de l'interface
+
+
 
                         joueurSuivant.setTexte(String.format("Joueur Actuel : %s %s",
                                 Jeu.getInstance().getJoueursQueue().peek().getNom(),
                                 Jeu.getInstance().getJoueursQueue().peek().getPrenom()
                                 )
-                                );
+                        );
+
+                        Jeu.getInstance().getJoueursQueue().add(Jeu.getInstance().getJoueurActuel());
+
+                        Jeu.getInstance().setJoueurActuel(Jeu.getInstance().getJoueursQueue().poll());
+
+
 
                         pionsJoueurActuel.setTexte(
                                 String.format("Pions du joueur actuel : %d",
                                         Jeu.getInstance().getJoueurActuel().getNbrPions()
-                                        )
-                                        );
+                                )
+                        );
 
                         nombreCapture.setTexte(
-                            String.format("Nombre de captures : %d",
-                                    Jeu.getInstance().getJoueurActuel().getNbrCapture()
+                                String.format("Nombre de captures : %d",
+                                        Jeu.getInstance().getJoueurActuel().getNbrCapture()
+                                )
+                        );
+                        plateau.dessiner();
+                        fenetrePrincipale.rafraichir();
+
+                    });
+
+                    Jeu.getInstance().ajouterLog(
+                            String.format(
+                                    "Le joueur %s %s a placé un pion en %d, %d",
+                                    Jeu.getInstance().getJoueurActuel().getNom(),
+                                    Jeu.getInstance().getJoueurActuel().getPrenom(),
+                                    casePlacement.getPosition().getX(),
+                                    casePlacement.getPosition().getY()
+                                    )
+                    );
+
+                    // Màj de l'interface
+
+                    joueurActuel.setTexte(String.format("Prochain Joueur : %s %s",
+                            Jeu.getInstance().getJoueurActuel().getNom(),
+                            Jeu.getInstance().getJoueurActuel().getPrenom()
+                            )
+                            );
+
+                    joueurSuivant.setTexte(String.format("Joueur Actuel : %s %s",
+                            Jeu.getInstance().getJoueursQueue().peek().getNom(),
+                            Jeu.getInstance().getJoueursQueue().peek().getPrenom()
+                            )
+                            );
+
+                    pionsJoueurActuel.setTexte(
+                            String.format("Pions du joueur actuel : %d",
+                                    Jeu.getInstance().getJoueurActuel().getNbrPions()
                                     )
                                     );
 
-                        fenetrePrincipale.rafraichir();
+                    nombreCapture.setTexte(
+                        String.format("Nombre de captures : %d",
+                                Jeu.getInstance().getJoueurActuel().getNbrCapture()
+                                )
+                                );
 
-                    }
+                    fenetrePrincipale.rafraichir();
+
                 });
 
 

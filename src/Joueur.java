@@ -1,7 +1,20 @@
 import MG2D.Couleur;
 import java.util.ArrayList;
 
-public class Joueur{
+/**
+ * Représente un joueur dans la partie
+ *
+ * Auteurs :
+ *
+ * BERNARD Manon
+ * BOURRE Maxime
+ * BUTELLE Dorine
+ * VASSEUR Maxence
+ * DELSART Eloise
+ * MARTIN Lucas
+ * */
+
+public class Joueur {
 
     // prenom du joueur
     private String prenom = null;
@@ -15,15 +28,22 @@ public class Joueur{
     // Garde les adresses mémoires des pions placés par ce joueur
     private ArrayList<Acteur> pions;
 
-    // Ensemble des constructeurs
-
+    /**
+     * Constructeur par défaut
+     */
     public Joueur(){
 
         this.pions = new ArrayList<>();
 
     }
 
-    // prenant les paramètres nom, prénom, couleur
+    /**
+     * Constructeur joueur
+     *
+     * @param prenom
+     * @param nom
+     * @param couleur
+     */
     public Joueur(String prenom, String nom, MG2D.Couleur couleur){
 
         this.pions = new ArrayList<>();

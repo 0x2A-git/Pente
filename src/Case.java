@@ -5,8 +5,17 @@ import java.util.ArrayList;
 import java.util.Vector;
 /**
  * Représente la case d'une grille
+ *
+ * Auteurs :
+ *
+ * BERNARD Manon
+ * BOURRE Maxime
+ * BUTELLE Dorine
+ * VASSEUR Maxence
+ * DELSART Eloise
+ * MARTIN Lucas
+ *
  * */
-
 public class Case {
 
     /**

@@ -5,6 +5,19 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+/**
+ * Classe qui représente une zone texte et est donc composée d'objets de type Texte
+ *
+ * Auteurs :
+ *
+ * BERNARD Manon
+ * BOURRE Maxime
+ * BUTELLE Dorine
+ * VASSEUR Maxence
+ * DELSART Eloise
+ * MARTIN Lucas
+ */
+
 public class ZoneTexte extends Acteur {
 
     ArrayList<Texte> textes = new ArrayList<>();
@@ -12,6 +25,9 @@ public class ZoneTexte extends Acteur {
     Font police = null;
 
 
+    /**
+     * Constructeur par défaut
+     */
     public ZoneTexte(){
 
         this.police = new Font("Serif", Font.PLAIN, 15);
@@ -19,6 +35,11 @@ public class ZoneTexte extends Acteur {
 
     }
 
+    /**
+     * Constructeur ZoneTexte
+     *
+     * @param texteContenu - Texte à placer dans la zone du texte
+     */
     public ZoneTexte(String texteContenu){
         this.police = new Font("Serif", Font.PLAIN, 10);
 
@@ -33,6 +54,11 @@ public class ZoneTexte extends Acteur {
 
     }
 
+    /**
+     * Constructeur ZoneTexte
+     *
+     * @param textesContenu - Les textes à ajouter
+     */
     public ZoneTexte(ArrayList<String> textesContenu){
         textesContenu.forEach(texteContenu -> {
             Texte texte = new Texte();
@@ -41,12 +67,21 @@ public class ZoneTexte extends Acteur {
         });
     }
 
+    /**
+     * Dessin attachés à ZoneTexte
+     * @return - Retourne les dessins attachés à la zone de texte
+     */
+
     @Override
     public ArrayList<Dessin> dessiner() {
 
         return new ArrayList<>(textes);
     }
 
+    /**
+     * Ajouter texte
+     * @param texteContenu - Texte à ajouter
+     */
     public void ajouterTexte(String texteContenu){
 
         Texte texte = new Texte(
@@ -59,6 +94,10 @@ public class ZoneTexte extends Acteur {
         textes.add(texte);
     }
 
+    /**
+     * Ajouter texte
+     * @param texte - Texte à ajouter
+     */
     public void ajouterTexte(Texte texte){
         texte.setPolice(police);
         textes.add(texte);
@@ -71,6 +110,10 @@ public class ZoneTexte extends Acteur {
 
     }
 
+    /**
+     * Lorsque zone texte est ajouté, empiler les textes
+     * @param caseActuelle - Case où la zone de texte a été placé
+     */
 
     @Override
     public void onAjoute(Case caseActuelle) {
@@ -103,6 +146,10 @@ public class ZoneTexte extends Acteur {
 
     }
 
+    /**
+     * Getter textes
+     * @return - Récupère les textes de la zone de texte
+     */
     public ArrayList<Texte> getTextes(){
         return this.textes;
     }

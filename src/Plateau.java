@@ -7,9 +7,23 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+/**
+ * Représente un plateau où l'on peut placer des pions
+ *
+ * Auteurs :
+ *
+ * BERNARD Manon
+ * BOURRE Maxime
+ * BUTELLE Dorine
+ * VASSEUR Maxence
+ * DELSART Eloise
+ * MARTIN Lucas
+ * */
+
 public class Plateau extends Acteur {
 
 
+    // Trigger appelé lorsqu'un pion est placé sur le plateau
     public interface OnPionPlaceListener {
         void onPionPlaceListener(Case casePlacement, Pion pion);
     }
@@ -28,17 +42,29 @@ public class Plateau extends Acteur {
         super(new Vecteur2<>(0, 0));
     }
 
+    /**
+     * Constructeur Plateau
+     * @param position - Position plateau
+     */
     public Plateau(Vecteur2<Integer> position){
 
         super(position);
 
     }
 
+    /**
+     * Getter grille
+     * @return - Retourne une référence vers la grille du plateau
+     */
     public Grille getGrille() {
         return grille;
     }
 
 
+    /**
+     * Lorsque le plateau est cliqué
+     * @param event - Evennement AWT
+     */
     @Override
     public void onClique(MouseEvent event) {
 
@@ -90,6 +116,10 @@ public class Plateau extends Acteur {
 
     }
 
+    /**
+     * Appelé lorseque le plateau est ajouté à la scène
+     * @param caseActuelle - Case sur laquelle le plateau a été ajoutée
+     */
     @Override
     public void onAjoute(Case caseActuelle) {
 
@@ -123,7 +153,11 @@ public class Plateau extends Acteur {
     }
 
 
-
+    /**
+     * Permet de dessiner graphiquement le plateau
+     * @return - Retourne les dessins attachés au plateau
+     */
+    @Override
     public ArrayList<Dessin> dessiner() {
 
         for(int x = 0; x < getGrille().getMatrice().size() - 1; x++) {
@@ -212,6 +246,10 @@ public class Plateau extends Acteur {
     }
 
 
+    /**
+     * Détecte si il y a une capture en diagonale droite
+     * @param casePlacement - Référence de la classe où le pion a été placé
+     */
     public void detecterCaptureDiagonaleDroite(Case casePlacement){
 
         LinkedList<Acteur> candidats = new LinkedList<>();
@@ -296,6 +334,10 @@ public class Plateau extends Acteur {
         }
     }
 
+    /**
+     * Détecte si il y a une capture en diagonale gauche
+     * @param casePlacement - Référence de la classe où le pion a été placé
+     */
     public void detecterCaptureDiagonaleGauche(Case casePlacement){
         LinkedList<Acteur> candidats = new LinkedList<>();
 
@@ -378,93 +420,12 @@ public class Plateau extends Acteur {
         }
     }
 
-    private boolean getVictoireHorizontaleVerticale(Case casePlacement){
-
-        int nbAlignementX = 0;
-        int nbAlignementY = 0;
-
-        ArrayList<Acteur> pionsACapturer = new ArrayList<>();
-
-        boolean possibleCapture = false;
-
-        /**
-         * Regarde 5 voisins en horizontal, en vertical et en diagonal
-         */
-        for(int x = Math.max(casePlacement.getPosition().getX() - 5, 0);
-            x < Math.min(casePlacement.getPosition().getX() + 5, this.getGrille().getMatrice().size()); x++)
-        {
-
-
-            for (int y = Math.max(casePlacement.getPosition().getY() - 5, 0);
-                 y < Math.min(casePlacement.getPosition().getY() + 5, this.getGrille().getMatrice().get(0).size());
-                 y++)
-            {
-
-                // Check en vertical
-                Case caseScannee = this.getGrille().getCase(x, y);
-                
-                if (caseScannee.getObjets().size() < 1)
-                    continue;
-
-
-                if (caseScannee.getObjets().get(0).getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur())
-                    nbAlignementY += 1;
-                else {
-                    nbAlignementY = 0;
-                    pionsACapturer.add(caseScannee.getObjets().get(0) );
-                }
-
-
-            }
-
-            if(nbAlignementY == 5) {
-                System.out.println("Gagné en vertical");
-
-                Jeu.getInstance().ajouterLog(
-                        String.format(
-                                "Le joueur %s %s a gagné grâce à un placement en vertical",
-                                Jeu.getInstance().getJoueurActuel().getNom(),
-                                Jeu.getInstance().getJoueurActuel().getPrenom()
-                        )
-                );
-
-                return true;
-            }
-            nbAlignementY = 0;
-
-            // On check en horizontal
-
-            Case caseX = this.getGrille().getCase(x, casePlacement.getPosition().getY());
-
-            if(caseX.getObjets().size() < 1) continue;
-
-            if (caseX.getObjets().get(0).getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur())
-                nbAlignementX += 1;
-            else
-                nbAlignementX = 0;
-
-
-            if(nbAlignementX == 5) {
-
-                System.out.println("Gagné en horizontal");
-
-                Jeu.getInstance().ajouterLog(
-                        String.format(
-                                "Le joueur %s %s a gagné grâce à un placement en horizontal",
-                                Jeu.getInstance().getJoueurActuel().getNom(),
-                                Jeu.getInstance().getJoueurActuel().getPrenom()
-                        )
-                );
-
-                return true;
-            }
-
-
-        }
-
-        return false;
-    }
-
+    /**
+     * Détecter une capture verticale
+     *
+     * @param casePlacement - Référence de la classe où le pion a été placé
+     * @param pion - Pion placé
+     */
     public void detecterCaptureVerticale(Case casePlacement, Pion pion){
 
         LinkedList<Acteur> candidats = new LinkedList<>();
@@ -548,6 +509,12 @@ public class Plateau extends Acteur {
 
         }
     }
+
+    /**
+     * Détecter une capture horizontale
+     * @param casePlacement - Référence de la classe où le pion a été placé
+     * @param pion - Pion placé
+     */
 
     public void detecterCaptureHorizontale(Case casePlacement, Pion pion){
 
@@ -633,6 +600,104 @@ public class Plateau extends Acteur {
         }
     }
 
+    /**
+     * Permet de vérifier si il y a une victoire par alignement en vertical ou en horizontal
+     * @param casePlacement - Référence de la classe où le pion a été placé
+     * @return - Gagné ou pas
+     */
+    private boolean getVictoireHorizontaleVerticale(Case casePlacement){
+
+        int nbAlignementX = 0;
+        int nbAlignementY = 0;
+
+        ArrayList<Acteur> pionsACapturer = new ArrayList<>();
+
+        boolean possibleCapture = false;
+
+        /**
+         * Regarde 5 voisins en horizontal, en vertical et en diagonal
+         */
+        for(int x = Math.max(casePlacement.getPosition().getX() - 5, 0);
+            x < Math.min(casePlacement.getPosition().getX() + 5, this.getGrille().getMatrice().size()); x++)
+        {
+
+
+            for (int y = Math.max(casePlacement.getPosition().getY() - 5, 0);
+                 y < Math.min(casePlacement.getPosition().getY() + 5, this.getGrille().getMatrice().get(0).size());
+                 y++)
+            {
+
+                // Check en vertical
+                Case caseScannee = this.getGrille().getCase(x, y);
+
+                if (caseScannee.getObjets().size() < 1)
+                    continue;
+
+
+                if (caseScannee.getObjets().get(0).getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur())
+                    nbAlignementY += 1;
+                else {
+                    nbAlignementY = 0;
+                    pionsACapturer.add(caseScannee.getObjets().get(0) );
+                }
+
+
+            }
+
+            if(nbAlignementY == 5) {
+                System.out.println("Gagné en vertical");
+
+                Jeu.getInstance().ajouterLog(
+                        String.format(
+                                "Le joueur %s %s a gagné grâce à un placement en vertical",
+                                Jeu.getInstance().getJoueurActuel().getNom(),
+                                Jeu.getInstance().getJoueurActuel().getPrenom()
+                        )
+                );
+
+                return true;
+            }
+            nbAlignementY = 0;
+
+            // On check en horizontal
+
+            Case caseX = this.getGrille().getCase(x, casePlacement.getPosition().getY());
+
+            if(caseX.getObjets().size() < 1) continue;
+
+            if (caseX.getObjets().get(0).getComposant(ColorableComposant.class).getCouleur() == Jeu.getInstance().getJoueurActuel().getCouleur())
+                nbAlignementX += 1;
+            else
+                nbAlignementX = 0;
+
+
+            if(nbAlignementX == 5) {
+
+                System.out.println("Gagné en horizontal");
+
+                Jeu.getInstance().ajouterLog(
+                        String.format(
+                                "Le joueur %s %s a gagné grâce à un placement en horizontal",
+                                Jeu.getInstance().getJoueurActuel().getNom(),
+                                Jeu.getInstance().getJoueurActuel().getPrenom()
+                        )
+                );
+
+                return true;
+            }
+
+
+        }
+
+        return false;
+    }
+
+    /**
+     * Getter check si victoire en diagonale
+     *
+     * @param casePlacement - Référence sur la case où un pion a été placé
+     * @return - Retourne si victoire ou non
+     */
     private boolean getVictoireDiagonale(Case casePlacement){
         int nbDiagonaleDroite = 0;
 
@@ -693,6 +758,12 @@ public class Plateau extends Acteur {
 
         return meilleurEnchainement == 5;
     }
+
+    /**
+     * Retourne si la partie est gagnante ou non
+     * @param casePlacement - Case où le pion a été placé
+     * @return - Retourne si la partie est gagnée
+     */
     public boolean getPartieEstGagnante(Case casePlacement){
 
         return getVictoireHorizontaleVerticale(casePlacement) ||
